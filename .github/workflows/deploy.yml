@@ -90,11 +90,10 @@ jobs:
         echo "${{ secrets.EC2_PRIVATE_KEY }}" > $KEY_FILE
         chmod 400 $KEY_FILE
     
-    - name: Build and push Docker images
+    - name: Build Docker images
       env:
         DOCKER_DEFAULT_PLATFORM: linux/amd64
       run: |
-        # 构建后端镜像
         echo "构建后端镜像..."
         docker compose build --no-cache backend
         if [ $? -ne 0 ]; then
@@ -102,7 +101,6 @@ jobs:
           exit 1
         fi
         
-        # 构建前端镜像
         echo "构建前端镜像..."
         docker compose build --no-cache frontend
         if [ $? -ne 0 ]; then
@@ -110,16 +108,13 @@ jobs:
           exit 1
         fi
         
-        # 获取镜像信息
         echo "获取镜像信息..."
         docker images
         
-        # 使用docker images命令获取镜像信息
         echo "获取构建的镜像..."
         BACKEND_IMAGE=$(docker images --filter "reference=*backend*" --format "{{.Repository}}:{{.Tag}}" | head -1)
         FRONTEND_IMAGE=$(docker images --filter "reference=*frontend*" --format "{{.Repository}}:{{.Tag}}" | head -1)
         
-        # 如果没有找到标准命名的镜像，使用项目名称查找
         if [ -z "$BACKEND_IMAGE" ] || [ "$BACKEND_IMAGE" = "<none>:<none>" ]; then
           BACKEND_IMAGE=$(docker images --filter "reference=itwords*backend*" --format "{{.Repository}}:{{.Tag}}" | head -1)
         fi
@@ -128,7 +123,6 @@ jobs:
           FRONTEND_IMAGE=$(docker images --filter "reference=itwords*frontend*" --format "{{.Repository}}:{{.Tag}}" | head -1)
         fi
         
-        # 如果仍然没有找到，使用最新构建的镜像
         if [ -z "$BACKEND_IMAGE" ] || [ "$BACKEND_IMAGE" = "<none>:<none>" ]; then
           BACKEND_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -E "(backend|itwords.*backend)" | head -1)
         fi
@@ -148,7 +142,6 @@ jobs:
           exit 1
         fi
         
-        # 保存镜像
         mkdir -p deploy-images
         echo "保存后端镜像: $BACKEND_IMAGE"
         docker save "$BACKEND_IMAGE" -o deploy-images/backend.tar
@@ -156,24 +149,101 @@ jobs:
         docker save "$FRONTEND_IMAGE" -o deploy-images/frontend.tar
         tar -czf deploy-images.tar.gz -C deploy-images .
         
-        # 将镜像名称保存到文件中，供后续步骤使用
         echo "$BACKEND_IMAGE" > backend-image-name.txt
         echo "$FRONTEND_IMAGE" > frontend-image-name.txt
     
+    - name: Create deployment compose file
+      run: |
+        BACKEND_IMAGE=$(cat backend-image-name.txt)
+        FRONTEND_IMAGE=$(cat frontend-image-name.txt)
+        
+        cat > deploy-compose.yml << 'COMPOSE_EOF'
+        services:
+          mysql:
+            image: mysql:8.0
+            container_name: itwords-mysql
+            restart: unless-stopped
+            environment:
+              MYSQL_ROOT_PASSWORD: xcx981211
+              MYSQL_DATABASE: mysql_itwordslearning
+              MYSQL_USER: itwords_user
+              MYSQL_PASSWORD: itwords_password
+            ports:
+              - "3306:3306"
+            volumes:
+              - mysql_data:/var/lib/mysql
+              - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+            networks:
+              - itwords-network
+            healthcheck:
+              test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+              timeout: 20s
+              retries: 10
+
+          backend:
+            image: BACKEND_IMAGE_PLACEHOLDER
+            container_name: itwords-backend
+            restart: unless-stopped
+            environment:
+              SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/mysql_itwordslearning?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Tokyo&useUnicode=true&characterEncoding=utf8
+              SPRING_DATASOURCE_USERNAME: root
+              SPRING_DATASOURCE_PASSWORD: xcx981211
+              SERVER_PORT: 8080
+            ports:
+              - "8080:8080"
+            depends_on:
+              mysql:
+                condition: service_healthy
+            networks:
+              - itwords-network
+            healthcheck:
+              test: ["CMD", "sh", "-c", "wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || curl -f http://localhost:8080/actuator/health || exit 1"]
+              interval: 30s
+              timeout: 10s
+              retries: 3
+              start_period: 60s
+
+          frontend:
+            image: FRONTEND_IMAGE_PLACEHOLDER
+            container_name: itwords-frontend
+            restart: unless-stopped
+            ports:
+              - "80:80"
+            depends_on:
+              backend:
+                condition: service_healthy
+            networks:
+              - itwords-network
+            healthcheck:
+              test: ["CMD", "sh", "-c", "wget --no-verbose --tries=1 --spider http://localhost || curl -f http://localhost || exit 1"]
+              interval: 30s
+              timeout: 10s
+              retries: 3
+              start_period: 30s
+
+        volumes:
+          mysql_data:
+            driver: local
+
+        networks:
+          itwords-network:
+            driver: bridge
+        COMPOSE_EOF
+        
+        sed -i "s/BACKEND_IMAGE_PLACEHOLDER/$BACKEND_IMAGE/g" deploy-compose.yml
+        sed -i "s/FRONTEND_IMAGE_PLACEHOLDER/$FRONTEND_IMAGE/g" deploy-compose.yml
+        
+        echo "生成的docker-compose文件:"
+        cat deploy-compose.yml
+    
     - name: Deploy to EC2
       run: |
-        # 检查EC2连接
         echo "检查EC2连接..."
-        ssh -i $KEY_FILE -o StrictHostKeyChecking=no -o ConnectTimeout=10 $EC2_USER@$EC2_IP "echo \"EC2连接成功\"" || {
+        ssh -i $KEY_FILE -o StrictHostKeyChecking=no -o ConnectTimeout=10 $EC2_USER@$EC2_IP "echo 'EC2连接成功'" || {
           echo "❌ 无法连接到EC2实例"
           exit 1
         }
         
-        # 读取镜像名称
-        BACKEND_IMAGE=$(cat backend-image-name.txt)
-        FRONTEND_IMAGE=$(cat frontend-image-name.txt)
-        
-        # 传输镜像和配置文件
         echo "传输镜像文件..."
         ssh -i $KEY_FILE -o StrictHostKeyChecking=no $EC2_USER@$EC2_IP "mkdir -p ~/itwords-images"
         scp -i $KEY_FILE -o StrictHostKeyChecking=no deploy-images.tar.gz $EC2_USER@$EC2_IP:~/itwords-images/ || {
@@ -181,193 +251,114 @@ jobs:
           exit 1
         }
         
-        # 创建部署用的docker-compose文件
-        cat > deploy-compose.yml << EOF
-services:
-  mysql:
-    image: mysql:8.0
-    container_name: itwords-mysql
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: xcx981211
-      MYSQL_DATABASE: mysql_itwordslearning
-      MYSQL_USER: itwords_user
-      MYSQL_PASSWORD: itwords_password
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
-    networks:
-      - itwords-network
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      timeout: 20s
-      retries: 10
-
-  backend:
-    image: $BACKEND_IMAGE
-    container_name: itwords-backend
-    restart: unless-stopped
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/mysql_itwordslearning?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Tokyo&useUnicode=true&characterEncoding=utf8
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: xcx981211
-      SERVER_PORT: 8080
-    ports:
-      - "8080:8080"
-    depends_on:
-      mysql:
-        condition: service_healthy
-    networks:
-      - itwords-network
-    healthcheck:
-      test: ["CMD", "sh", "-c", "wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || curl -f http://localhost:8080/actuator/health || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
-
-  frontend:
-    image: $FRONTEND_IMAGE
-    container_name: itwords-frontend
-    restart: unless-stopped
-    ports:
-      - "80:80"
-    depends_on:
-      backend:
-        condition: service_healthy
-    networks:
-      - itwords-network
-    healthcheck:
-      test: ["CMD", "sh", "-c", "wget --no-verbose --tries=1 --spider http://localhost || curl -f http://localhost || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
-
-volumes:
-  mysql_data:
-    driver: local
-
-networks:
-  itwords-network:
-    driver: bridge
-EOF
-        
-        # 复制部署配置文件
         scp -i $KEY_FILE -o StrictHostKeyChecking=no deploy-compose.yml $EC2_USER@$EC2_IP:~/itwords-images/
         scp -i $KEY_FILE -o StrictHostKeyChecking=no scripts/data-processing/init.sql $EC2_USER@$EC2_IP:~/itwords-images/ 2>/dev/null || echo "init.sql 不存在，跳过"
         scp -i $KEY_FILE -o StrictHostKeyChecking=no complete_wordlist.csv $EC2_USER@$EC2_IP:~/itwords-images/ 2>/dev/null || echo "complete_wordlist.csv 不存在，跳过"
-        
-        # 在EC2上部署
-        ssh -i $KEY_FILE -o StrictHostKeyChecking=no $EC2_USER@$EC2_IP "
-            cd ~/itwords-images
-            
-            # 检测Docker Compose命令
-            if command -v docker-compose >/dev/null 2>&1; then
-                COMPOSE_CMD=\"docker-compose\"
-                echo \"使用docker-compose命令\"
-            elif docker compose version >/dev/null 2>&1; then
-                COMPOSE_CMD=\"docker compose\"
-                echo \"使用docker compose命令\"
-            else
-                echo \"❌ 未找到Docker Compose命令\"
-                exit 1
+    
+    - name: Start application on EC2
+      run: |
+        ssh -i $KEY_FILE -o StrictHostKeyChecking=no $EC2_USER@$EC2_IP << 'DEPLOY_SCRIPT'
+          cd ~/itwords-images
+          
+          # 检测Docker Compose命令
+          if command -v docker-compose >/dev/null 2>&1; then
+            COMPOSE_CMD="docker-compose"
+            echo "使用docker-compose命令"
+          elif docker compose version >/dev/null 2>&1; then
+            COMPOSE_CMD="docker compose"
+            echo "使用docker compose命令"
+          else
+            echo "❌ 未找到Docker Compose命令"
+            exit 1
+          fi
+          
+          # 停止现有容器
+          $COMPOSE_CMD -f deploy-compose.yml down -v 2>/dev/null || true
+          
+          # 清理Docker系统
+          echo "清理Docker系统..."
+          docker container prune -f 2>/dev/null || true
+          docker image prune -f 2>/dev/null || true
+          docker volume prune -f 2>/dev/null || true
+          docker network prune -f 2>/dev/null || true
+          
+          # 解压并加载镜像
+          echo "解压镜像文件..."
+          tar -xzf deploy-images.tar.gz
+          
+          echo "加载后端镜像..."
+          docker load -i backend.tar
+          
+          echo "加载前端镜像..."
+          docker load -i frontend.tar
+          
+          echo "加载完成的镜像列表:"
+          docker images
+          
+          # 清理临时文件
+          rm -f *.tar deploy-images.tar.gz
+          
+          echo "启动应用..."
+          $COMPOSE_CMD -f deploy-compose.yml up -d
+          
+          # 等待服务启动
+          echo "等待服务启动..."
+          for i in {1..60}; do
+            if $COMPOSE_CMD -f deploy-compose.yml ps | grep -q "Up"; then
+              echo "✅ 服务已启动"
+              break
             fi
-            
-            # 停止现有容器
-            \$COMPOSE_CMD -f deploy-compose.yml down -v 2>/dev/null || true
-            
-            # 清理Docker系统（兼容旧版本）
-            echo \"清理Docker系统...\"
-            docker container prune -f 2>/dev/null || true
-            docker image prune -f 2>/dev/null || true
-            docker volume prune -f 2>/dev/null || true
-            docker network prune -f 2>/dev/null || true
-            
-            # 解压并加载镜像
-            echo \"解压镜像文件...\"
-            tar -xzf deploy-images.tar.gz
-            
-            echo \"加载后端镜像...\"
-            docker load -i backend.tar
-            
-            echo \"加载前端镜像...\"
-            docker load -i frontend.tar
-            
-            # 显示加载的镜像
-            echo \"加载完成的镜像列表:\"
-            docker images
-            
-            # 清理临时文件
-            rm -f *.tar deploy-images.tar.gz
-            
-            echo \"启动应用...\"
-            \$COMPOSE_CMD -f deploy-compose.yml up -d
-            
-            # 等待服务启动
-            echo \"等待服务启动...\"
-            for i in {1..60}; do
-                if \$COMPOSE_CMD -f deploy-compose.yml ps | grep -q \"Up\"; then
-                    echo \"✅ 服务已启动\"
-                    break
-                fi
-                echo \"等待中... (\$i/60)\"
-                sleep 5
-            done
-            
-            # 检查服务状态
-            echo \"检查服务状态:\"
-            \$COMPOSE_CMD -f deploy-compose.yml ps
-            
-            # 检查服务健康状态
-            echo \"检查服务健康状态:\"
-            \$COMPOSE_CMD -f deploy-compose.yml logs --tail=50
-        "
+            echo "等待中... ($i/60)"
+            sleep 5
+          done
+          
+          # 检查服务状态
+          echo "检查服务状态:"
+          $COMPOSE_CMD -f deploy-compose.yml ps
+          
+          # 检查服务健康状态
+          echo "检查服务健康状态:"
+          $COMPOSE_CMD -f deploy-compose.yml logs --tail=50
+        DEPLOY_SCRIPT
     
     - name: Verify deployment
       run: |
-        # 等待服务完全启动
         echo "等待服务完全启动..."
         sleep 30
         
-        # 测试后端API
         echo "测试后端API..."
         for i in {1..12}; do
-            if curl -f -s http://$EC2_IP:8080/actuator/health > /dev/null 2>&1; then
-                echo "✅ 后端API外部访问成功"
-                break
-            fi
-            echo "等待后端API... ($i/12)"
-            sleep 10
+          if curl -f -s http://$EC2_IP:8080/actuator/health > /dev/null 2>&1; then
+            echo "✅ 后端API外部访问成功"
+            break
+          fi
+          echo "等待后端API... ($i/12)"
+          sleep 10
         done
         
-        # 测试前端
         echo "测试前端..."
         for i in {1..6}; do
-            if curl -f -s http://$EC2_IP > /dev/null 2>&1; then
-                echo "✅ 前端外部访问成功"
-                break
-            fi
-            echo "等待前端... ($i/6)"
-            sleep 10
+          if curl -f -s http://$EC2_IP > /dev/null 2>&1; then
+            echo "✅ 前端外部访问成功"
+            break
+          fi
+          echo "等待前端... ($i/6)"
+          sleep 10
         done
         
-        # 最终验证
         echo "最终验证..."
         if curl -f -s http://$EC2_IP:8080/actuator/health > /dev/null 2>&1; then
-            echo "✅ 后端API外部访问成功"
+          echo "✅ 后端API外部访问成功"
         else
-            echo "❌ 后端API外部访问失败"
-            exit 1
+          echo "❌ 后端API外部访问失败"
+          exit 1
         fi
         
         if curl -f -s http://$EC2_IP > /dev/null 2>&1; then
-            echo "✅ 前端外部访问成功"
+          echo "✅ 前端外部访问成功"
         else
-            echo "❌ 前端外部访问失败"
-            exit 1
+          echo "❌ 前端外部访问失败"
+          exit 1
         fi
     
     - name: Cleanup
