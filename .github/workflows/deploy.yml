@@ -121,10 +121,10 @@ jobs:
         
         # 如果上面的方法失败，尝试其他方法
         if [ -z "$BACKEND_IMAGE" ]; then
-          BACKEND_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -E "backend:" | head -1)
+          BACKEND_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep "backend:" | head -1)
         fi
         if [ -z "$FRONTEND_IMAGE" ]; then
-          FRONTEND_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -E "frontend:" | head -1)
+          FRONTEND_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep "frontend:" | head -1)
         fi
         
         # 如果还是失败，使用镜像ID
@@ -193,35 +193,18 @@ jobs:
             docker load -i backend.tar
             docker load -i frontend.tar
             
-            # 获取加载的镜像名称（使用更可靠的方法）
+            # 获取加载的镜像信息
             echo "获取加载的镜像信息..."
             docker images
             
-            # 尝试多种方法获取镜像名称
-            BACKEND_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -E "backend:" | head -1)
-            FRONTEND_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -E "frontend:" | head -1)
-            
-            # 如果上面的方法失败，使用镜像ID
-            if [ -z "$BACKEND_IMAGE" ]; then
-                BACKEND_IMAGE=$(docker images --format "{{.ID}}" | head -1)
-                echo "⚠️ 使用第一个镜像ID作为后端镜像: $BACKEND_IMAGE"
-            fi
-            if [ -z "$FRONTEND_IMAGE" ]; then
-                FRONTEND_IMAGE=$(docker images --format "{{.ID}}" | tail -1)
-                echo "⚠️ 使用最后一个镜像ID作为前端镜像: $FRONTEND_IMAGE"
-            fi
-            
-            echo "加载的后端镜像: $BACKEND_IMAGE"
-            echo "加载的前端镜像: $FRONTEND_IMAGE"
-            
-            # 验证镜像名称
-            if [ -z "$BACKEND_IMAGE" ]; then
-                echo "❌ 无法找到后端镜像"
-                docker images
-                exit 1
-            fi
-            if [ -z "$FRONTEND_IMAGE" ]; then
-                echo "❌ 无法找到前端镜像"
+            # 使用镜像ID作为最可靠的方法
+            IMAGE_IDS=($(docker images --format "{{.ID}}" | head -2))
+            if [ ${#IMAGE_IDS[@]} -ge 2 ]; then
+                BACKEND_IMAGE=${IMAGE_IDS[0]}
+                FRONTEND_IMAGE=${IMAGE_IDS[1]}
+                echo "使用镜像ID: 后端=$BACKEND_IMAGE, 前端=$FRONTEND_IMAGE"
+            else
+                echo "❌ 镜像数量不足，需要至少2个镜像"
                 docker images
                 exit 1
             fi
@@ -229,6 +212,9 @@ jobs:
             # 更新deploy-compose.yml中的镜像名称
             sed -i "s|image: backend:latest|image: $BACKEND_IMAGE|g" deploy-compose.yml
             sed -i "s|image: frontend:latest|image: $FRONTEND_IMAGE|g" deploy-compose.yml
+            
+            echo "更新后的deploy-compose.yml内容:"
+            cat deploy-compose.yml
             
             # 清理临时文件
             rm -f *.tar deploy-images.tar.gz
