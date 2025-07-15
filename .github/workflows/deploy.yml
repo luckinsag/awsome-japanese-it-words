@@ -114,14 +114,17 @@ jobs:
         echo "获取镜像信息..."
         docker images
         
-        # 直接使用镜像ID，避免复杂的字符串处理
-        IMAGE_IDS=($(docker images --format "{{.ID}}" | head -2))
-        if [ ${#IMAGE_IDS[@]} -ge 2 ]; then
-          BACKEND_IMAGE=${IMAGE_IDS[0]}
-          FRONTEND_IMAGE=${IMAGE_IDS[1]}
+        # 使用更简单的方法获取镜像ID，避免--format参数
+        echo "获取镜像ID..."
+        docker images | head -3 | tail -2 > temp_images.txt
+        BACKEND_IMAGE=$(head -1 temp_images.txt | awk '{print $3}')
+        FRONTEND_IMAGE=$(tail -1 temp_images.txt | awk '{print $3}')
+        rm -f temp_images.txt
+        
+        if [ -n "$BACKEND_IMAGE" ] && [ -n "$FRONTEND_IMAGE" ]; then
           echo "使用镜像ID: 后端=$BACKEND_IMAGE, 前端=$FRONTEND_IMAGE"
         else
-          echo "❌ 镜像数量不足，需要至少2个镜像"
+          echo "❌ 无法获取镜像ID"
           docker images
           exit 1
         fi
@@ -171,14 +174,17 @@ jobs:
             echo "获取加载的镜像信息..."
             docker images
             
-            # 使用镜像ID作为最可靠的方法
-            IMAGE_IDS=($(docker images --format "{{.ID}}" | head -2))
-            if [ ${#IMAGE_IDS[@]} -ge 2 ]; then
-                BACKEND_IMAGE=${IMAGE_IDS[0]}
-                FRONTEND_IMAGE=${IMAGE_IDS[1]}
+            # 使用更简单的方法获取镜像ID，避免--format参数
+            echo "获取镜像ID..."
+            docker images | head -3 | tail -2 > temp_images.txt
+            BACKEND_IMAGE=$(head -1 temp_images.txt | awk '{print $3}')
+            FRONTEND_IMAGE=$(tail -1 temp_images.txt | awk '{print $3}')
+            rm -f temp_images.txt
+            
+            if [ -n "$BACKEND_IMAGE" ] && [ -n "$FRONTEND_IMAGE" ]; then
                 echo "使用镜像ID: 后端=$BACKEND_IMAGE, 前端=$FRONTEND_IMAGE"
             else
-                echo "❌ 镜像数量不足，需要至少2个镜像"
+                echo "❌ 无法获取镜像ID"
                 docker images
                 exit 1
             fi
