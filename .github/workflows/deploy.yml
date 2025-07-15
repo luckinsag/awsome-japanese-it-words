@@ -96,7 +96,7 @@ jobs:
       run: |
         # 构建后端镜像
         echo "构建后端镜像..."
-        docker compose build --no-cache backend
+        docker-compose build --no-cache backend
         if [ $? -ne 0 ]; then
           echo "❌ 后端镜像构建失败"
           exit 1
@@ -104,7 +104,7 @@ jobs:
         
         # 构建前端镜像
         echo "构建前端镜像..."
-        docker compose build --no-cache frontend
+        docker-compose build --no-cache frontend
         if [ $? -ne 0 ]; then
           echo "❌ 前端镜像构建失败"
           exit 1
@@ -114,7 +114,7 @@ jobs:
         echo "获取镜像信息..."
         docker images
         
-        # 使用docker compose images命令获取镜像信息
+        # 使用docker images命令获取镜像信息
         echo "获取构建的镜像..."
         BACKEND_IMAGE=$(docker images --filter "reference=*backend*" --format "{{.Repository}}:{{.Tag}}" | head -1)
         FRONTEND_IMAGE=$(docker images --filter "reference=*frontend*" --format "{{.Repository}}:{{.Tag}}" | head -1)
@@ -205,46 +205,46 @@ jobs:
               timeout: 20s
               retries: 10
 
-          backend:
-            image: $BACKEND_IMAGE
-            container_name: itwords-backend
-            restart: unless-stopped
-            environment:
-              SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/mysql_itwordslearning?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Tokyo&useUnicode=true&characterEncoding=utf8
-              SPRING_DATASOURCE_USERNAME: root
-              SPRING_DATASOURCE_PASSWORD: xcx981211
-              SERVER_PORT: 8080
-            ports:
-              - "8080:8080"
-            depends_on:
-              mysql:
-                condition: service_healthy
-            networks:
-              - itwords-network
-            healthcheck:
-              test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
-              interval: 30s
-              timeout: 10s
-              retries: 3
-              start_period: 60s
+                     backend:
+             image: $BACKEND_IMAGE
+             container_name: itwords-backend
+             restart: unless-stopped
+             environment:
+               SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/mysql_itwordslearning?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Tokyo&useUnicode=true&characterEncoding=utf8
+               SPRING_DATASOURCE_USERNAME: root
+               SPRING_DATASOURCE_PASSWORD: xcx981211
+               SERVER_PORT: 8080
+             ports:
+               - "8080:8080"
+             depends_on:
+               mysql:
+                 condition: service_healthy
+             networks:
+               - itwords-network
+             healthcheck:
+               test: ["CMD", "sh", "-c", "wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || curl -f http://localhost:8080/actuator/health || exit 1"]
+               interval: 30s
+               timeout: 10s
+               retries: 3
+               start_period: 60s
 
-          frontend:
-            image: $FRONTEND_IMAGE
-            container_name: itwords-frontend
-            restart: unless-stopped
-            ports:
-              - "80:80"
-            depends_on:
-              backend:
-                condition: service_healthy
-            networks:
-              - itwords-network
-            healthcheck:
-              test: ["CMD-SHELL", "curl -f http://localhost || exit 1"]
-              interval: 30s
-              timeout: 10s
-              retries: 3
-              start_period: 30s
+           frontend:
+             image: $FRONTEND_IMAGE
+             container_name: itwords-frontend
+             restart: unless-stopped
+             ports:
+               - "80:80"
+             depends_on:
+               backend:
+                 condition: service_healthy
+             networks:
+               - itwords-network
+             healthcheck:
+               test: ["CMD", "sh", "-c", "wget --no-verbose --tries=1 --spider http://localhost || curl -f http://localhost || exit 1"]
+               interval: 30s
+               timeout: 10s
+               retries: 3
+               start_period: 30s
 
         volumes:
           mysql_data:
@@ -265,8 +265,14 @@ jobs:
             cd ~/itwords-images
             
             # 停止现有容器
-            docker compose -f deploy-compose.yml down -v 2>/dev/null || true
-            docker system prune -f -a
+            docker-compose -f deploy-compose.yml down -v 2>/dev/null || true
+            
+            # 清理Docker系统（兼容旧版本）
+            echo '清理Docker系统...'
+            docker container prune -f 2>/dev/null || true
+            docker image prune -f 2>/dev/null || true
+            docker volume prune -f 2>/dev/null || true
+            docker network prune -f 2>/dev/null || true
             
             # 解压并加载镜像
             echo '解压镜像文件...'
@@ -286,12 +292,12 @@ jobs:
             rm -f *.tar deploy-images.tar.gz
             
             echo '启动应用...'
-            docker compose -f deploy-compose.yml up -d
+            docker-compose -f deploy-compose.yml up -d
             
             # 等待服务启动
             echo '等待服务启动...'
             for i in {1..60}; do
-                if docker compose -f deploy-compose.yml ps | grep -q 'Up'; then
+                if docker-compose -f deploy-compose.yml ps | grep -q 'Up'; then
                     echo '✅ 服务已启动'
                     break
                 fi
@@ -301,11 +307,11 @@ jobs:
             
             # 检查服务状态
             echo '检查服务状态:'
-            docker compose -f deploy-compose.yml ps
+            docker-compose -f deploy-compose.yml ps
             
             # 检查服务健康状态
             echo '检查服务健康状态:'
-            docker compose -f deploy-compose.yml logs --tail=50
+            docker-compose -f deploy-compose.yml logs --tail=50
         "
     
     - name: Verify deployment
