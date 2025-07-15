@@ -95,17 +95,22 @@ jobs:
         # 构建后端镜像
         echo "构建后端镜像..."
         docker compose build --no-cache backend
-        docker tag itwords4-backend:latest backend:latest
         
         # 构建前端镜像
         echo "构建前端镜像..."
         docker compose build --no-cache frontend
-        docker tag itwords4-frontend:latest frontend:latest
+        
+        # 获取正确的镜像名称
+        BACKEND_IMAGE=$(docker compose images -q backend)
+        FRONTEND_IMAGE=$(docker compose images -q frontend)
+        
+        echo "后端镜像ID: $BACKEND_IMAGE"
+        echo "前端镜像ID: $FRONTEND_IMAGE"
         
         # 保存镜像
         mkdir -p deploy-images
-        docker save backend:latest -o deploy-images/backend.tar
-        docker save frontend:latest -o deploy-images/frontend.tar
+        docker save $BACKEND_IMAGE -o deploy-images/backend.tar
+        docker save $FRONTEND_IMAGE -o deploy-images/frontend.tar
         tar -czf deploy-images.tar.gz -C deploy-images .
     
     - name: Deploy to EC2
@@ -113,8 +118,88 @@ jobs:
         # 传输镜像
         scp -i $KEY_FILE -o StrictHostKeyChecking=no deploy-images.tar.gz $EC2_USER@$EC2_IP:~/itwords-images/
         
+        # 创建部署配置文件
+        cat > deploy-compose.yml << 'EOF'
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: itwords-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: xcx981211
+      MYSQL_DATABASE: mysql_itwordslearning
+      MYSQL_USER: itwords_user
+      MYSQL_PASSWORD: itwords_password
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - itwords-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  backend:
+    image: backend:latest
+    container_name: itwords-backend
+    restart: unless-stopped
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/mysql_itwordslearning?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Tokyo&useUnicode=true&characterEncoding=utf8
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: xcx981211
+      SERVER_PORT: 8080
+    ports:
+      - "8080:8080"
+    volumes:
+      - backend_logs:/app/logs
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - itwords-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  frontend:
+    image: frontend:latest
+    container_name: itwords-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - itwords-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+volumes:
+  mysql_data:
+    driver: local
+  backend_logs:
+    driver: local
+
+networks:
+  itwords-network:
+    driver: bridge
+EOF
+
         # 传输配置文件
-        scp -i $KEY_FILE -o StrictHostKeyChecking=no docker-compose.yml $EC2_USER@$EC2_IP:~/itwords-images/deploy-compose.yml
+        scp -i $KEY_FILE -o StrictHostKeyChecking=no deploy-compose.yml $EC2_USER@$EC2_IP:~/itwords-images/
         scp -i $KEY_FILE -o StrictHostKeyChecking=no scripts/data-processing/init.sql $EC2_USER@$EC2_IP:~/itwords-images/init.sql 2>/dev/null || echo "init.sql 不存在，跳过"
         scp -i $KEY_FILE -o StrictHostKeyChecking=no complete_wordlist.csv $EC2_USER@$EC2_IP:~/itwords-images/ 2>/dev/null || echo "complete_wordlist.csv 不存在，跳过"
         
@@ -130,6 +215,21 @@ jobs:
             tar -xzf deploy-images.tar.gz
             docker load -i backend.tar
             docker load -i frontend.tar
+            
+            # 获取加载的镜像名称
+            BACKEND_IMAGE=$(docker images --format "table {{.Repository}}:{{.Tag}}" | grep backend | head -1)
+            FRONTEND_IMAGE=$(docker images --format "table {{.Repository}}:{{.Tag}}" | grep frontend | head -1)
+            
+            echo "加载的后端镜像: $BACKEND_IMAGE"
+            echo "加载的前端镜像: $FRONTEND_IMAGE"
+            
+            # 更新deploy-compose.yml中的镜像名称
+            if [ ! -z "$BACKEND_IMAGE" ]; then
+                sed -i "s|image: backend:latest|image: $BACKEND_IMAGE|g" deploy-compose.yml
+            fi
+            if [ ! -z "$FRONTEND_IMAGE" ]; then
+                sed -i "s|image: frontend:latest|image: $FRONTEND_IMAGE|g" deploy-compose.yml
+            fi
             
             # 清理临时文件
             rm -f *.tar deploy-images.tar.gz
