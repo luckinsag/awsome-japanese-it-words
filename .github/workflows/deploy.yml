@@ -110,22 +110,47 @@ jobs:
           exit 1
         fi
         
-        # 获取正确的镜像名称
-        BACKEND_IMAGE=$(docker compose images -q backend)
-        FRONTEND_IMAGE=$(docker compose images -q frontend)
+        # 获取正确的镜像名称（使用更可靠的方法）
+        echo "获取镜像信息..."
+        docker images
+        
+        # 使用项目名称获取镜像ID
+        PROJECT_NAME=$(basename $(pwd))
+        BACKEND_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -E "^${PROJECT_NAME}_backend:" | head -1)
+        FRONTEND_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -E "^${PROJECT_NAME}_frontend:" | head -1)
+        
+        # 如果上面的方法失败，尝试其他方法
+        if [ -z "$BACKEND_IMAGE" ]; then
+          BACKEND_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -E "backend:" | head -1)
+        fi
+        if [ -z "$FRONTEND_IMAGE" ]; then
+          FRONTEND_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -E "frontend:" | head -1)
+        fi
+        
+        # 如果还是失败，使用镜像ID
+        if [ -z "$BACKEND_IMAGE" ]; then
+          BACKEND_IMAGE=$(docker images --format "{{.ID}}" | head -1)
+          echo "⚠️ 使用第一个镜像ID作为后端镜像: $BACKEND_IMAGE"
+        fi
+        if [ -z "$FRONTEND_IMAGE" ]; then
+          FRONTEND_IMAGE=$(docker images --format "{{.ID}}" | tail -1)
+          echo "⚠️ 使用最后一个镜像ID作为前端镜像: $FRONTEND_IMAGE"
+        fi
         
         # 验证镜像ID
         if [ -z "$BACKEND_IMAGE" ]; then
           echo "❌ 无法获取后端镜像ID"
+          docker images
           exit 1
         fi
         if [ -z "$FRONTEND_IMAGE" ]; then
           echo "❌ 无法获取前端镜像ID"
+          docker images
           exit 1
         fi
         
-        echo "后端镜像ID: $BACKEND_IMAGE"
-        echo "前端镜像ID: $FRONTEND_IMAGE"
+        echo "后端镜像: $BACKEND_IMAGE"
+        echo "前端镜像: $FRONTEND_IMAGE"
         
         # 保存镜像
         mkdir -p deploy-images
@@ -168,9 +193,23 @@ jobs:
             docker load -i backend.tar
             docker load -i frontend.tar
             
-            # 获取加载的镜像名称（更精确的匹配）
-            BACKEND_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -E "^[^/]+backend:" | head -1)
-            FRONTEND_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -E "^[^/]+frontend:" | head -1)
+            # 获取加载的镜像名称（使用更可靠的方法）
+            echo "获取加载的镜像信息..."
+            docker images
+            
+            # 尝试多种方法获取镜像名称
+            BACKEND_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -E "backend:" | head -1)
+            FRONTEND_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -E "frontend:" | head -1)
+            
+            # 如果上面的方法失败，使用镜像ID
+            if [ -z "$BACKEND_IMAGE" ]; then
+                BACKEND_IMAGE=$(docker images --format "{{.ID}}" | head -1)
+                echo "⚠️ 使用第一个镜像ID作为后端镜像: $BACKEND_IMAGE"
+            fi
+            if [ -z "$FRONTEND_IMAGE" ]; then
+                FRONTEND_IMAGE=$(docker images --format "{{.ID}}" | tail -1)
+                echo "⚠️ 使用最后一个镜像ID作为前端镜像: $FRONTEND_IMAGE"
+            fi
             
             echo "加载的后端镜像: $BACKEND_IMAGE"
             echo "加载的前端镜像: $FRONTEND_IMAGE"
@@ -178,10 +217,12 @@ jobs:
             # 验证镜像名称
             if [ -z "$BACKEND_IMAGE" ]; then
                 echo "❌ 无法找到后端镜像"
+                docker images
                 exit 1
             fi
             if [ -z "$FRONTEND_IMAGE" ]; then
                 echo "❌ 无法找到前端镜像"
+                docker images
                 exit 1
             fi
             
