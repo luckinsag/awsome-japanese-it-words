@@ -90,10 +90,10 @@ cat ./sag-.pem
    
    # 查看容器状态
    cd ~/itwords-images
-   docker-compose -f deploy-compose.yml ps
+   docker compose -f deploy-compose.yml ps
    
    # 查看日志
-   docker-compose -f deploy-compose.yml logs -f
+   docker compose -f deploy-compose.yml logs -f
    ```
 
 ### 应用访问地址与端口
@@ -131,10 +131,10 @@ ssh -i ./sag-.pem ec2-user@57.180.30.179 "echo '连接成功'"
 ssh -i ./sag-.pem ec2-user@57.180.30.179 "docker --version && docker-compose --version"
 
 # 检查应用状态
-ssh -i ./sag-.pem ec2-user@57.180.30.179 "cd ~/itwords-images && docker-compose -f deploy-compose.yml ps"
+ssh -i ./sag-.pem ec2-user@57.180.30.179 "cd ~/itwords-images && docker compose -f deploy-compose.yml ps"
 
 # 查看详细日志
-ssh -i ./sag-.pem ec2-user@57.180.30.179 "cd ~/itwords-images && docker-compose -f deploy-compose.yml logs"
+ssh -i ./sag-.pem ec2-user@57.180.30.179 "cd ~/itwords-images && docker compose -f deploy-compose.yml logs"
 ```
 
 ## 🔄 手动部署
