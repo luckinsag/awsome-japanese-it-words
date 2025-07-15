@@ -110,47 +110,21 @@ jobs:
           exit 1
         fi
         
-        # 获取正确的镜像名称（使用更可靠的方法）
+        # 获取镜像信息（使用最简单可靠的方法）
         echo "获取镜像信息..."
         docker images
         
-        # 使用项目名称获取镜像ID
-        PROJECT_NAME=$(basename $(pwd))
-        BACKEND_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -E "^${PROJECT_NAME}_backend:" | head -1)
-        FRONTEND_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -E "^${PROJECT_NAME}_frontend:" | head -1)
-        
-        # 如果上面的方法失败，尝试其他方法
-        if [ -z "$BACKEND_IMAGE" ]; then
-          BACKEND_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep "backend:" | head -1)
-        fi
-        if [ -z "$FRONTEND_IMAGE" ]; then
-          FRONTEND_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep "frontend:" | head -1)
-        fi
-        
-        # 如果还是失败，使用镜像ID
-        if [ -z "$BACKEND_IMAGE" ]; then
-          BACKEND_IMAGE=$(docker images --format "{{.ID}}" | head -1)
-          echo "⚠️ 使用第一个镜像ID作为后端镜像: $BACKEND_IMAGE"
-        fi
-        if [ -z "$FRONTEND_IMAGE" ]; then
-          FRONTEND_IMAGE=$(docker images --format "{{.ID}}" | tail -1)
-          echo "⚠️ 使用最后一个镜像ID作为前端镜像: $FRONTEND_IMAGE"
-        fi
-        
-        # 验证镜像ID
-        if [ -z "$BACKEND_IMAGE" ]; then
-          echo "❌ 无法获取后端镜像ID"
+        # 直接使用镜像ID，避免复杂的字符串处理
+        IMAGE_IDS=($(docker images --format "{{.ID}}" | head -2))
+        if [ ${#IMAGE_IDS[@]} -ge 2 ]; then
+          BACKEND_IMAGE=${IMAGE_IDS[0]}
+          FRONTEND_IMAGE=${IMAGE_IDS[1]}
+          echo "使用镜像ID: 后端=$BACKEND_IMAGE, 前端=$FRONTEND_IMAGE"
+        else
+          echo "❌ 镜像数量不足，需要至少2个镜像"
           docker images
           exit 1
         fi
-        if [ -z "$FRONTEND_IMAGE" ]; then
-          echo "❌ 无法获取前端镜像ID"
-          docker images
-          exit 1
-        fi
-        
-        echo "后端镜像: $BACKEND_IMAGE"
-        echo "前端镜像: $FRONTEND_IMAGE"
         
         # 保存镜像
         mkdir -p deploy-images
