@@ -183,77 +183,77 @@ jobs:
         
         # 创建部署用的docker-compose文件
         cat > deploy-compose.yml << EOF
-        services:
-          mysql:
-            image: mysql:8.0
-            container_name: itwords-mysql
-            restart: unless-stopped
-            environment:
-              MYSQL_ROOT_PASSWORD: xcx981211
-              MYSQL_DATABASE: mysql_itwordslearning
-              MYSQL_USER: itwords_user
-              MYSQL_PASSWORD: itwords_password
-            ports:
-              - "3306:3306"
-            volumes:
-              - mysql_data:/var/lib/mysql
-              - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
-            networks:
-              - itwords-network
-            healthcheck:
-              test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-              timeout: 20s
-              retries: 10
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: itwords-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: xcx981211
+      MYSQL_DATABASE: mysql_itwordslearning
+      MYSQL_USER: itwords_user
+      MYSQL_PASSWORD: itwords_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - itwords-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
 
-                     backend:
-             image: $BACKEND_IMAGE
-             container_name: itwords-backend
-             restart: unless-stopped
-             environment:
-               SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/mysql_itwordslearning?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Tokyo&useUnicode=true&characterEncoding=utf8
-               SPRING_DATASOURCE_USERNAME: root
-               SPRING_DATASOURCE_PASSWORD: xcx981211
-               SERVER_PORT: 8080
-             ports:
-               - "8080:8080"
-             depends_on:
-               mysql:
-                 condition: service_healthy
-             networks:
-               - itwords-network
-             healthcheck:
-               test: ["CMD", "sh", "-c", "wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || curl -f http://localhost:8080/actuator/health || exit 1"]
-               interval: 30s
-               timeout: 10s
-               retries: 3
-               start_period: 60s
+  backend:
+    image: $BACKEND_IMAGE
+    container_name: itwords-backend
+    restart: unless-stopped
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/mysql_itwordslearning?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Tokyo&useUnicode=true&characterEncoding=utf8
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: xcx981211
+      SERVER_PORT: 8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - itwords-network
+    healthcheck:
+      test: ["CMD", "sh", "-c", "wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || curl -f http://localhost:8080/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
 
-           frontend:
-             image: $FRONTEND_IMAGE
-             container_name: itwords-frontend
-             restart: unless-stopped
-             ports:
-               - "80:80"
-             depends_on:
-               backend:
-                 condition: service_healthy
-             networks:
-               - itwords-network
-             healthcheck:
-               test: ["CMD", "sh", "-c", "wget --no-verbose --tries=1 --spider http://localhost || curl -f http://localhost || exit 1"]
-               interval: 30s
-               timeout: 10s
-               retries: 3
-               start_period: 30s
+  frontend:
+    image: $FRONTEND_IMAGE
+    container_name: itwords-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - itwords-network
+    healthcheck:
+      test: ["CMD", "sh", "-c", "wget --no-verbose --tries=1 --spider http://localhost || curl -f http://localhost || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
-        volumes:
-          mysql_data:
-            driver: local
+volumes:
+  mysql_data:
+    driver: local
 
-        networks:
-          itwords-network:
-            driver: bridge
-        EOF
+networks:
+  itwords-network:
+    driver: bridge
+EOF
         
         # 复制部署配置文件
         scp -i $KEY_FILE -o StrictHostKeyChecking=no deploy-compose.yml $EC2_USER@$EC2_IP:~/itwords-images/
