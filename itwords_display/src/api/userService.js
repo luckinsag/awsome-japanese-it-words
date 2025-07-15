@@ -2,7 +2,7 @@ import axios from 'axios'
 
 // 创建 axios 实例
 const api = axios.create({
-  baseURL: 'http://localhost:8080', // 直接使用完整的后端地址
+  baseURL: '/api', // 使用相对路径，与wordService保持一致
   timeout: 5000,
   headers: {
     'Content-Type': 'application/json'
@@ -63,7 +63,7 @@ api.interceptors.response.use(
 export default {
   // 用户登录
   login(username, password) {
-    return api.post('/api/auth/login', {
+    return api.post('/auth/login', {
       username,
       password
     })
@@ -71,6 +71,6 @@ export default {
 
   // 用户注册
   register(userData) {
-    return api.post('/api/auth/register', userData)
+    return api.post('/auth/register', userData)
   }
 } 
