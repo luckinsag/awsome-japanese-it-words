@@ -96,7 +96,7 @@ jobs:
       run: |
         # 构建后端镜像
         echo "构建后端镜像..."
-        docker-compose build --no-cache backend
+        docker compose build --no-cache backend
         if [ $? -ne 0 ]; then
           echo "❌ 后端镜像构建失败"
           exit 1
@@ -104,7 +104,7 @@ jobs:
         
         # 构建前端镜像
         echo "构建前端镜像..."
-        docker-compose build --no-cache frontend
+        docker compose build --no-cache frontend
         if [ $? -ne 0 ]; then
           echo "❌ 前端镜像构建失败"
           exit 1
@@ -264,8 +264,20 @@ jobs:
         ssh -i $KEY_FILE -o StrictHostKeyChecking=no $EC2_USER@$EC2_IP "
             cd ~/itwords-images
             
+            # 检测Docker Compose命令
+            if command -v docker-compose >/dev/null 2>&1; then
+                COMPOSE_CMD='docker-compose'
+                echo '使用docker-compose命令'
+            elif docker compose version >/dev/null 2>&1; then
+                COMPOSE_CMD='docker compose'
+                echo '使用docker compose命令'
+            else
+                echo '❌ 未找到Docker Compose命令'
+                exit 1
+            fi
+            
             # 停止现有容器
-            docker-compose -f deploy-compose.yml down -v 2>/dev/null || true
+            \$COMPOSE_CMD -f deploy-compose.yml down -v 2>/dev/null || true
             
             # 清理Docker系统（兼容旧版本）
             echo '清理Docker系统...'
@@ -292,12 +304,12 @@ jobs:
             rm -f *.tar deploy-images.tar.gz
             
             echo '启动应用...'
-            docker-compose -f deploy-compose.yml up -d
+            \$COMPOSE_CMD -f deploy-compose.yml up -d
             
             # 等待服务启动
             echo '等待服务启动...'
             for i in {1..60}; do
-                if docker-compose -f deploy-compose.yml ps | grep -q 'Up'; then
+                if \$COMPOSE_CMD -f deploy-compose.yml ps | grep -q 'Up'; then
                     echo '✅ 服务已启动'
                     break
                 fi
@@ -307,11 +319,11 @@ jobs:
             
             # 检查服务状态
             echo '检查服务状态:'
-            docker-compose -f deploy-compose.yml ps
+            \$COMPOSE_CMD -f deploy-compose.yml ps
             
             # 检查服务健康状态
             echo '检查服务健康状态:'
-            docker-compose -f deploy-compose.yml logs --tail=50
+            \$COMPOSE_CMD -f deploy-compose.yml logs --tail=50
         "
     
     - name: Verify deployment
