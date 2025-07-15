@@ -150,7 +150,7 @@ jobs:
         }
         
         # 创建部署配置文件
-        cat > deploy-compose.yml << 'EOF'
+        cat > deploy-compose.yml << 'COMPOSE_EOF'
 version: '3.8'
 
 services:
@@ -227,9 +227,7 @@ volumes:
 networks:
   itwords-network:
     driver: bridge
-EOF
-
-        # 传输配置文件
+COMPOSE_EOF
         scp -i $KEY_FILE -o StrictHostKeyChecking=no deploy-compose.yml $EC2_USER@$EC2_IP:~/itwords-images/
         scp -i $KEY_FILE -o StrictHostKeyChecking=no scripts/data-processing/init.sql $EC2_USER@$EC2_IP:~/itwords-images/init.sql 2>/dev/null || echo "init.sql 不存在，跳过"
         scp -i $KEY_FILE -o StrictHostKeyChecking=no complete_wordlist.csv $EC2_USER@$EC2_IP:~/itwords-images/ 2>/dev/null || echo "complete_wordlist.csv 不存在，跳过"
