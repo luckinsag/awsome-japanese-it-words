@@ -44,6 +44,7 @@ jobs:
       run: |
         cd itwords_api
         mvn test
+      continue-on-error: false
     
     - name: Set up Node.js
       uses: actions/setup-node@v4
@@ -57,6 +58,7 @@ jobs:
         cd itwords_display
         npm ci
         npm run build
+      continue-on-error: false
 
   build-and-deploy:
     needs: test
@@ -95,14 +97,32 @@ jobs:
         # 构建后端镜像
         echo "构建后端镜像..."
         docker compose build --no-cache backend
+        if [ $? -ne 0 ]; then
+          echo "❌ 后端镜像构建失败"
+          exit 1
+        fi
         
         # 构建前端镜像
         echo "构建前端镜像..."
         docker compose build --no-cache frontend
+        if [ $? -ne 0 ]; then
+          echo "❌ 前端镜像构建失败"
+          exit 1
+        fi
         
         # 获取正确的镜像名称
         BACKEND_IMAGE=$(docker compose images -q backend)
         FRONTEND_IMAGE=$(docker compose images -q frontend)
+        
+        # 验证镜像ID
+        if [ -z "$BACKEND_IMAGE" ]; then
+          echo "❌ 无法获取后端镜像ID"
+          exit 1
+        fi
+        if [ -z "$FRONTEND_IMAGE" ]; then
+          echo "❌ 无法获取前端镜像ID"
+          exit 1
+        fi
         
         echo "后端镜像ID: $BACKEND_IMAGE"
         echo "前端镜像ID: $FRONTEND_IMAGE"
@@ -115,8 +135,19 @@ jobs:
     
     - name: Deploy to EC2
       run: |
+        # 检查EC2连接
+        echo "检查EC2连接..."
+        ssh -i $KEY_FILE -o StrictHostKeyChecking=no -o ConnectTimeout=10 $EC2_USER@$EC2_IP "echo 'EC2连接成功'" || {
+          echo "❌ 无法连接到EC2实例"
+          exit 1
+        }
+        
         # 传输镜像
-        scp -i $KEY_FILE -o StrictHostKeyChecking=no deploy-images.tar.gz $EC2_USER@$EC2_IP:~/itwords-images/
+        echo "传输镜像文件..."
+        scp -i $KEY_FILE -o StrictHostKeyChecking=no deploy-images.tar.gz $EC2_USER@$EC2_IP:~/itwords-images/ || {
+          echo "❌ 镜像文件传输失败"
+          exit 1
+        }
         
         # 创建部署配置文件
         cat > deploy-compose.yml << 'EOF'
@@ -216,20 +247,26 @@ EOF
             docker load -i backend.tar
             docker load -i frontend.tar
             
-            # 获取加载的镜像名称
-            BACKEND_IMAGE=$(docker images --format "table {{.Repository}}:{{.Tag}}" | grep backend | head -1)
-            FRONTEND_IMAGE=$(docker images --format "table {{.Repository}}:{{.Tag}}" | grep frontend | head -1)
+            # 获取加载的镜像名称（更精确的匹配）
+            BACKEND_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -E "^[^/]+backend:" | head -1)
+            FRONTEND_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -E "^[^/]+frontend:" | head -1)
             
             echo "加载的后端镜像: $BACKEND_IMAGE"
             echo "加载的前端镜像: $FRONTEND_IMAGE"
             
+            # 验证镜像名称
+            if [ -z "$BACKEND_IMAGE" ]; then
+                echo "❌ 无法找到后端镜像"
+                exit 1
+            fi
+            if [ -z "$FRONTEND_IMAGE" ]; then
+                echo "❌ 无法找到前端镜像"
+                exit 1
+            fi
+            
             # 更新deploy-compose.yml中的镜像名称
-            if [ ! -z "$BACKEND_IMAGE" ]; then
-                sed -i "s|image: backend:latest|image: $BACKEND_IMAGE|g" deploy-compose.yml
-            fi
-            if [ ! -z "$FRONTEND_IMAGE" ]; then
-                sed -i "s|image: frontend:latest|image: $FRONTEND_IMAGE|g" deploy-compose.yml
-            fi
+            sed -i "s|image: backend:latest|image: $BACKEND_IMAGE|g" deploy-compose.yml
+            sed -i "s|image: frontend:latest|image: $FRONTEND_IMAGE|g" deploy-compose.yml
             
             # 清理临时文件
             rm -f *.tar deploy-images.tar.gz
@@ -237,28 +274,69 @@ EOF
             # 启动应用
             docker compose -f deploy-compose.yml up -d
             
-            # 等待服务启动
+            # 等待服务启动（动态等待）
             echo "等待服务启动..."
-            sleep 30
+            for i in {1..30}; do
+                if docker compose -f deploy-compose.yml ps | grep -q "Up"; then
+                    echo "✅ 服务已启动"
+                    break
+                fi
+                echo "等待中... ($i/30)"
+                sleep 10
+            done
             
             # 检查状态
             docker compose -f deploy-compose.yml ps
             
             # 测试连接
-            sleep 10
-            curl -f http://localhost:8080/actuator/health || echo "后端API测试失败"
-            curl -f http://localhost || echo "前端测试失败"
+            echo "测试服务连接..."
+            for i in {1..6}; do
+                if curl -f http://localhost:8080/actuator/health 2>/dev/null; then
+                    echo "✅ 后端API连接成功"
+                    break
+                fi
+                echo "等待后端API... ($i/6)"
+                sleep 10
+            done
+            
+            for i in {1..6}; do
+                if curl -f http://localhost 2>/dev/null; then
+                    echo "✅ 前端连接成功"
+                    break
+                fi
+                echo "等待前端... ($i/6)"
+                sleep 10
+            done
         '
     
     - name: Verify deployment
       run: |
         # 等待服务完全启动
-        sleep 60
+        echo "等待服务完全启动..."
+        for i in {1..12}; do
+            if curl -f http://$EC2_IP:8080/actuator/health 2>/dev/null; then
+                echo "✅ 后端API外部访问成功"
+                break
+            fi
+            echo "等待后端API外部访问... ($i/12)"
+            sleep 10
+        done
         
         # 测试外部访问
         echo "测试外部访问..."
-        curl -f http://$EC2_IP:8080/actuator/health || echo "后端API外部访问失败"
-        curl -f http://$EC2_IP || echo "前端外部访问失败"
+        if curl -f http://$EC2_IP:8080/actuator/health 2>/dev/null; then
+            echo "✅ 后端API外部访问成功"
+        else
+            echo "❌ 后端API外部访问失败"
+            exit 1
+        fi
+        
+        if curl -f http://$EC2_IP 2>/dev/null; then
+            echo "✅ 前端外部访问成功"
+        else
+            echo "❌ 前端外部访问失败"
+            exit 1
+        fi
     
     - name: Cleanup
       if: always()
