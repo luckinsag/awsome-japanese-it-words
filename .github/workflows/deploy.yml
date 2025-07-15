@@ -119,7 +119,7 @@ jobs:
         scp -i $KEY_FILE -o StrictHostKeyChecking=no complete_wordlist.csv $EC2_USER@$EC2_IP:~/itwords-images/ 2>/dev/null || echo "complete_wordlist.csv 不存在，跳过"
         
         # 在EC2上部署
-        ssh -i $KEY_FILE -o StrictHostKeyChecking=no $EC2_USER@$EC2_IP << 'EOF'
+        ssh -i $KEY_FILE -o StrictHostKeyChecking=no $EC2_USER@$EC2_IP '
             cd ~/itwords-images
             
             # 停止现有容器
@@ -148,7 +148,7 @@ jobs:
             sleep 10
             curl -f http://localhost:8080/actuator/health || echo "后端API测试失败"
             curl -f http://localhost || echo "前端测试失败"
-EOF
+        '
     
     - name: Verify deployment
       run: |
