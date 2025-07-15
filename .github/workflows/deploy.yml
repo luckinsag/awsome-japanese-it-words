@@ -149,85 +149,8 @@ jobs:
           exit 1
         }
         
-        # 创建部署配置文件
-        cat > deploy-compose.yml << 'COMPOSE_EOF'
-version: '3.8'
-
-services:
-  mysql:
-    image: mysql:8.0
-    container_name: itwords-mysql
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: xcx981211
-      MYSQL_DATABASE: mysql_itwordslearning
-      MYSQL_USER: itwords_user
-      MYSQL_PASSWORD: itwords_password
-    ports:
-      - "3307:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-    networks:
-      - itwords-network
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      timeout: 20s
-      retries: 10
-
-  backend:
-    image: backend:latest
-    container_name: itwords-backend
-    restart: unless-stopped
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/mysql_itwordslearning?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Tokyo&useUnicode=true&characterEncoding=utf8
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: xcx981211
-      SERVER_PORT: 8080
-    ports:
-      - "8080:8080"
-    volumes:
-      - backend_logs:/app/logs
-    depends_on:
-      mysql:
-        condition: service_healthy
-    networks:
-      - itwords-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-
-  frontend:
-    image: frontend:latest
-    container_name: itwords-frontend
-    restart: unless-stopped
-    ports:
-      - "80:80"
-    depends_on:
-      backend:
-        condition: service_healthy
-    networks:
-      - itwords-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
-
-volumes:
-  mysql_data:
-    driver: local
-  backend_logs:
-    driver: local
-
-networks:
-  itwords-network:
-    driver: bridge
-COMPOSE_EOF
+        # 复制部署配置文件
+        cp deploy-compose-template.yml deploy-compose.yml
         scp -i $KEY_FILE -o StrictHostKeyChecking=no deploy-compose.yml $EC2_USER@$EC2_IP:~/itwords-images/
         scp -i $KEY_FILE -o StrictHostKeyChecking=no scripts/data-processing/init.sql $EC2_USER@$EC2_IP:~/itwords-images/init.sql 2>/dev/null || echo "init.sql 不存在，跳过"
         scp -i $KEY_FILE -o StrictHostKeyChecking=no complete_wordlist.csv $EC2_USER@$EC2_IP:~/itwords-images/ 2>/dev/null || echo "complete_wordlist.csv 不存在，跳过"
