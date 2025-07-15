@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.itwordslearning.mapper.UserWrongMapper">
+
+<!-- 插入错题 -->
+    <insert id="insertUserWrong" parameterType="com.example.itwordslearning.entity.UserWrong">
+        INSERT INTO test_wrong_answers (session_id, word_id, user_id)
+        VALUES (#{sessionId}, #{wordId}, #{userId})
+    </insert>
+
+<!-- 删除错题 -->
+    <delete id="deleteUserWrong">
+        DELETE FROM test_wrong_answers
+        WHERE user_id = #{userId} AND word_id = #{wordId}
+    </delete>
+
+    <!-- 查询错词（包含词汇详细信息） -->
+    <select id="getWrongWordsByUserId" resultType="com.example.itwordslearning.entity.UserWrongWord">
+        SELECT
+		tw.user_id,
+		tw.word_id,
+		w.japanese,
+		w.chinese,
+		w.english,
+		w.category
+		FROM test_wrong_answers tw
+		INNER join words w ON tw.word_id = w.word_id
+		WHERE tw.user_id = #{userId}
+    </select>
+
+</mapper>

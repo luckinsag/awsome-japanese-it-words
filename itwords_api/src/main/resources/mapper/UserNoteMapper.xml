@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.itwordslearning.mapper.UserNoteMapper">
+
+    <insert id="insertUserNote" parameterType="com.example.itwordslearning.entity.UserNote">
+        INSERT INTO user_notes (user_id, word_id, memo)
+        VALUES (#{userId}, #{wordId}, #{memo})
+    </insert>
+
+    <select id="getNotesByUserId" resultType="com.example.itwordslearning.dto.UserNoteDTO">
+        SELECT
+            w.word_id AS wordId,
+            w.japanese AS japanese,
+            w.chinese AS chinese,
+            w.english AS english,
+            w.category AS category,
+            n.memo AS memo,
+            n.user_id AS userId,
+            n.added_at AS addedAt
+        FROM user_notes n
+        JOIN words w ON n.word_id = w.word_id
+        WHERE n.user_id = #{userId}
+        ORDER BY n.added_at DESC
+    </select>
+
+    <delete id="deleteUserNote">
+        DELETE FROM user_notes
+        WHERE user_id = #{userId} AND word_id = #{wordId}
+    </delete>
+
+    <select id="getNoteByWordId" resultType="com.example.itwordslearning.entity.UserNote">
+        SELECT memo
+        FROM user_notes
+        WHERE word_id = #{wordId} AND user_id = #{userId}
+    </select>
+
+    <update id="updateNoteByWordId">
+        UPDATE user_notes
+        SET memo = #{memo}
+        WHERE word_id = #{wordId} AND user_id = #{userId}
+    </update>
+
+    <select id="checkNoteExists" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM user_notes
+        WHERE word_id = #{wordId} AND user_id = #{userId}
+    </select>
+</mapper>

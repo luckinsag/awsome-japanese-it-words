@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+  用户设置映射文件
+  namespace: 对应Mapper接口的全限定名
+-->
+<mapper namespace="com.example.itwordslearning.mapper.UserSettingsMapper">
+
+	<!-- 
+      更新用户设置
+      id: 对应Mapper接口中的方法名
+      参数说明:
+        - #{fontSize}: 字体大小参数
+        - #{backgroundColor}: 背景颜色参数
+        - #{userId}: 用户ID(更新条件)
+      执行SQL: 根据用户ID更新字体大小和背景颜色
+	-->
+	<update id="updateUserSettings">
+		UPDATE user_settings
+		SET font_size = #{fontSize},       <!-- 设置字体大小字段 -->
+		background_color = #{backgroundColor}  <!-- 设置背景颜色字段 -->
+		WHERE user_id = #{userId}          <!-- 更新条件: 用户ID匹配 -->
+	</update>
+</mapper>

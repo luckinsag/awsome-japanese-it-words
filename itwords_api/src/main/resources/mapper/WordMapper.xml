@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 
+  单词数据映射文件
+  namespace: 对应WordMapper接口的全限定名
+-->
+<mapper namespace="com.example.itwordslearning.mapper.WordMapper">
+
+  <!-- 
+    单词实体类映射配置
+    id: 映射结果集标识
+    type: 对应的实体类全限定名
+  -->
+  <resultMap id="wordResultMap" type="com.example.itwordslearning.entity.Word">
+    <!-- 主键字段映射 -->
+    <id property="wordId" column="word_id" />
+    <!-- 普通字段映射 -->
+    <result property="japanese" column="japanese" />
+    <result property="chinese" column="chinese" />
+    <result property="english" column="english" />
+    <result property="category" column="category" />
+  </resultMap>
+
+  <!-- 
+    获取所有单词
+    resultMap: 使用上面定义的wordResultMap作为结果映射
+    执行SQL: 查询words表全部数据
+  -->
+  <select id="getAllWords" resultMap="wordResultMap">
+    SELECT * FROM words;
+  </select>
+  
+  <!-- 
+    按分类获取单词
+    parameterType: 参数类型为字符串集合
+    resultMap: 使用wordResultMap作为结果映射
+    执行SQL: 查询指定分类的单词数据
+    动态SQL: 使用foreach遍历分类列表
+  -->
+  <select id="getWordsByCategory" parameterType="string" resultMap="wordResultMap">
+    SELECT word_id, japanese, chinese, english, category
+    FROM words
+    WHERE category IN
+    <!-- 
+      foreach: 动态生成IN条件
+      collection: 方法参数中的集合名称
+      item: 集合中每个元素的变量名
+      open/close: 包裹在条件外的括号
+      separator: 元素间的分隔符
+    -->
+    <foreach item="category" collection="categories" open="(" separator="," close=")">
+      #{category}
+    </foreach>
+  </select>
+
+</mapper>

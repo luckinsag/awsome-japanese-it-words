@@ -1,0 +1,13 @@
+# SSH配置文件 - 复制到 ~/.ssh/config
+
+Host itwords-ec2
+    HostName 57.180.30.179
+    User ec2-user
+    IdentityFile ~/Desktop/ITWORDS\ 4/sag-.pem
+    Port 22
+    ServerAliveInterval 60
+    ServerAliveCountMax 3
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+
+# 使用方式: ssh itwords-ec2 

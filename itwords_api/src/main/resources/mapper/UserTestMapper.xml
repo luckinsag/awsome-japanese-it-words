@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.itwordslearning.mapper.UserTestMapper">
+
+    <insert id="insertUserTest" parameterType="com.example.itwordslearning.entity.UserTest">
+        INSERT INTO test_sessions (user_id, ended_at, score)
+        VALUES (#{userId}, #{endedAt}, #{score})
+    </insert>
+
+</mapper>

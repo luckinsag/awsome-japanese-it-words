@@ -1,0 +1,676 @@
+japanese,chinese,english,category
+アカウント,账户,account,Lesson 1
+アクション,动作,action,Lesson 1
+アクセス,访问,access,Lesson 1
+アクセスレベル,访问级别,access level,Lesson 1
+アクティビティ,活动,activity,Lesson 1
+アクティブ,激活,activate,Lesson 1
+アダプタ,适配器,adapter,Lesson 1
+アプリケーション,应用、应用程序,application,Lesson 1
+アプリケーション層(そう),应用层,application layer,Lesson 1
+アーンドバリューマネジメント,挣值管理,earned value management、 EVM,Lesson 1
+アルゴリズム,算法,algorithm,Lesson 1
+暗号化 (あんごうか),加密,encryption,Lesson 1
+アンチエイリアシング,反锯齿,anti-aliasing,Lesson 1
+イテレーション,迭代,iteration,Lesson 1
+イテレータ,迭代器,iterator,Lesson 1
+イベント,事件,event,Lesson 1
+インシデント,事件,incident,Lesson 1
+ウィンドウ,窗口,window,Lesson 1
+エクスプロイトコード,漏洞利用代码,exploit code,Lesson 1
+エッジ,边,edge,Lesson 1
+エラーメッセージ,报错,error message,Lesson 1
+エラーログ,错误日志,error log,Lesson 1
+エンジン,引擎,engine,Lesson 1
+エンタープライズアーキテクチャ,企业架构,enterprise architecture、 EA,Lesson 1
+エンドツーエンド認証(にんしょう),端对端身份验证,end-to-end authentication,Lesson 1
+オートマトン,自动机,automaton,Lesson 1
+オーバーライド,覆写、重新定义,override,Lesson 1
+オーバーロード,重载,overload,Lesson 1
+オペレーティングシステム,操作系统,operating system 、OS,Lesson 1
+カーネル,内核,kernel /ˈkɜrnəl/,Lesson 2
+仮想記憶 (かそうきおく),虚拟内存,virtual memory,Lesson 2
+カルノー図(ず),卡诺图,Karnaugh map,Lesson 2
+簡易(かんい)メール転送(てんそう)/プロトコル　,简单邮件传输协议,simple mail transfer protocol、SMTP,Lesson 2
+関係(かんけい)データベース,关系数据库,relational database,Lesson 2
+キー,键,key,Lesson 2
+キー/バリュー/ストア,键值数据库、键值存储,key–value store、 KVS,Lesson 2
+機械学習(きかいがくしゅう),机器学习,machine learning,Lesson 2
+逆(ぎゃく)ポーランド記法(きほう),逆波兰表示法、逆波兰记法,reverse polish notation、RPN,Lesson 2
+キャッシュ/サーバ,缓存服务器,cache server,Lesson 2
+キャパシティ,容量,capacity,Lesson 2
+近似/文字列照合(きんじ/もじれつしょうごう),字符串模糊匹配,approximate string matching,Lesson 2
+クライアント,客户、客户端,client,Lesson 2
+クライアント/アプリケーション,客户端应用程序,client application,Lesson 2
+クラスタソフトウェア,群集软件,cluster software,Lesson 2
+クラスタリング,聚类分析,clustering,Lesson 2
+クロスコンパイラ,交叉编译器,cross compiler,Lesson 2
+クロスサイトスクリプティング,跨站脚本攻击,cross-site scripting,Lesson 2
+桁上げ (けたあげ),进位,carry,Lesson 2
+検査特性曲線(けんさとくせいきょくせん)、OC曲線(きょくせん),工作特征曲线,operating characterisitic curve,Lesson 2
+コアコンピタンス,核心竞争力,core competence,Lesson 2
+構造化照会言語(こうぞうかしょうかいげんご),结构化查询语言,structured query language、SQL,Lesson 2
+互換性 (ごかんせい),兼容性,compatibility,Lesson 2
+コンカレントエンジニアリング,并行工程,concurrent engineering,Lesson 2
+コンピュータ/グラフィックス,计算机图形学,computer graphics、CG,Lesson 2
+サーバ,服务器,server,Lesson 3
+再帰 (さいき),递归,recursion,Lesson 3
+最初適合(さいしょてきごう)アルゴリズム,首次适应算法,first fit algorithm,Lesson 3
+最短経路(さいたんけいろ),最短路径,shortest path,Lesson 3
+最良適合(さいりょうてきごう)アルゴリズム,最佳适应算法,best fit algorithm,Lesson 3
+作成(さくせい),创建、生成,create/creation,Lesson 3
+サブクエリ,子查询,subquery,Lesson 3
+サブネットアドレス,子网地址,subnet address,Lesson 3
+サブネットマスク,子网掩码,sub-net mask,Lesson 3
+サンドボックス,沙盒,sandbox,Lesson 3
+実(じつ)コスト,实际成本,actual cost,Lesson 3
+冗長構成(じょうちょうこうせい),冗余配置,redundant configuration,Lesson 3
+情報(じょうほう)セキュリティ,信息安全,information security,Lesson 3
+初期化 (しょきか),初始化,initialization,Lesson 3
+初期化(しょきか)リスト,初始化列表、初始值列表,initialization list,Lesson 3
+シンクライアント,瘦客户端,thin client,Lesson 3
+人工()ニューラルネットワーク,人工神经网络,artificial neural network、ANN,Lesson 3
+スイッチングハブ,网络交换机,switching hub,Lesson 3
+スーパースカラ,超标量,superscalar,Lesson 3
+スキーム,框架,scheme,Lesson 3
+スタックポインタ,堆栈指针,stack pointer,Lesson 3
+スタック領域(りょういき),栈内存,stack memory,Lesson 3
+スタブ,桩,stub,Lesson 3
+ストアドプロシージャ,存储过程,stored procedure,Lesson 3
+ストリング,字符串,string,Lesson 3
+スラッシング,颠簸,thrashing,Lesson 3
+セッション,会话,session,Lesson 3
+セマフォ,信号标,semaphore,Lesson 3
+ゼロディ攻撃(こうげき),零日攻击,zero-day attack,Lesson 3
+ソースコード,源码、源代码,source code,Lesson 3
+帯域圧縮(たいいきあっしゅく),带宽压缩,bandwidth reduction,Lesson 4
+帯域幅 (たいいきはば),带宽,bandwidth,Lesson 4
+耐(たい)タンパー性(せい),防篡改,tamper resistant,Lesson 4
+ダイヤルアップ,拨号,dial up,Lesson 4
+タスク,任务,task,Lesson 4
+ダミー作業(さぎょう),虚拟工作,dummy work,Lesson 4
+ディープラーニング,深度学习,deep learning,Lesson 4
+ディザリング,抖动,dithering,Lesson 4
+ディジタルシグナルプロセッサ,数字信号处理器,digital signal processor,Lesson 4
+ディジタルツイン,数字孪生、数字映射,digital twin,Lesson 4
+ディジタルフォレンジックス,数字鉴识、数字取证,digital forensics,Lesson 4
+ディレクトリトラバーサル攻撃(こうげき),目录遍历攻击,directory traversal attack,Lesson 4
+データ,数据,data,Lesson 4
+データ構造(こうぞう),数据结构,data structures,Lesson 4
+データ辞書(じしょ),数据字典,data dictionary,Lesson 4
+データセット,数据集,dataset,Lesson 4
+データベース,数据库,database,Lesson 4
+デジタルサイネージ,数字标牌,digital signage,Lesson 4
+デジタル署名(しょめい),电子签名,digital signature,Lesson 4
+デッドロック,死锁,dead lock,Lesson 4
+デマンドページング,请求分页,demand paging,Lesson 4
+デルファイ法(ほう),德尔菲法,Delphi method,Lesson 4
+電子(でんし)データ交換(こうかん),电子数据交换,electronic data interchange,Lesson 4
+問合せ(といあわせ),查询,inquiry,Lesson 4
+投資利益率(とうしりえきりつ),投资回报率,Return on Investment、ROI,Lesson 4
+登録(とうろく),注冊,register,Lesson 4
+ドメイン名(めい),域名,domain name,Lesson 4
+ドライブバイダウンロード攻撃(こうげき),偷渡式下载攻击、路过式下载攻击,drive-by download attack,Lesson 4
+トランザクション処理(しょり),事务处理,transaction processing,Lesson 4
+トランザクションログ,事务日志,transaction log,Lesson 4
+トランスポート層(そう),传输层,transport layer,Lesson 4
+認可 (にんか),授权,authorization,Lesson 5
+認証 (にんしょう),验证,authentication,Lesson 5
+認証(にんしょう)サービス,验证服务,authentication service,Lesson 5
+ネットワーク,网络,network,Lesson 5
+ネットワークアドレス,网络地址,network address,Lesson 5
+ネットワークカード,网卡,network card,Lesson 5
+ネットワークフロー,网络流,network flow,Lesson 5
+ノード,节点,node,Lesson 5
+ハードウェア,硬件,hardware,Lesson 6
+バーンダウンチャート,燃尽图,burndown chart,Lesson 6
+バイト,字节,byte,Lesson 6
+ハイパーリンク,超链接,hyperlink,Lesson 6
+パイプライン処理(しょり),流水线、管线,pipeline,Lesson 6
+バックアップ,备份,backup,Lesson 6
+バックアップファイル,备份文件,backup file,Lesson 6
+パッケージ,包,package,Lesson 6
+パッケージ処理(しょり),打包,packaging,Lesson 6
+バッチ処理(しょり),批处理,batch processing,Lesson 6
+ハフマン符号(ふごう),霍夫曼编码,Huffman coding,Lesson 6
+パレート図(ず),帕累托图、排列图法、主次因素分析法,Pareto chart,Lesson 6
+パンくずリスト,面包屑导航,breadcrumb list,Lesson 6
+ハンドラ,处理器,handler,Lesson 6
+ヒープ領域 (りょういき),堆内存,heap memory,Lesson 6
+ビット,比特,bit,Lesson 6
+ビュー,视图,view,Lesson 6
+ファイアウォール,防火墙,firewall,Lesson 6
+ファジング,模糊测试,fuzzing,Lesson 6
+ファンクションポイント法(ほう),功能点法,function point method,Lesson 6
+フラッシュメモリ,闪存、快闪存储器,flash memory,Lesson 6
+プリエンプション,抢占式多任务处理,preemption,Lesson 6
+ブルートフォース攻撃(こうげき),蛮力攻击,brute force attack,Lesson 6
+プレシデンスダイアグラム法(ほう),前导图法,presence diagramming,Lesson 6
+プレフィックス,前缀,prefix,Lesson 6
+ブロードキャストアドレス,广播地址,broadcast address,Lesson 6
+プロキシサーバ,代理服务器,proxy server,Lesson 6
+プログラミング,编程、程序设计,programming,Lesson 6
+プログラム,程序,program,Lesson 6
+プログラムカウンタ,程序计数器,program counter,Lesson 6
+プロセス,进程,process,Lesson 6
+プロトコル,协议,protocol,Lesson 6
+プロファイラ,性能解析工具,profiler,Lesson 6
+分散(ぶんさん)クエリ,分布式查询,distributed query,Lesson 6
+分散(ぶんさん)コンピューティング,分布式计算,distributed computing,Lesson 6
+並列接続 (へいれつせつぞく),并联,parallel connection,Lesson 6
+ホストアドレス,主机地址,host address,Lesson 6
+ホットキー,热键,hot key,Lesson 6
+マージソート,归并排序,ｍerge sort,Lesson 7
+マウス,鼠标,mouse,Lesson 7
+マクロ,宏,macro,Lesson 7
+マクロウィルス,宏病毒,macro virus,Lesson 7
+マスク,掩码,mask,Lesson 7
+マルチタスク,多任务,multi-tasking,Lesson 7
+マルチユーザー,多用户,multiuser,Lesson 7
+メッセージ,消息,message,Lesson 7
+メニュー,菜单,menu,Lesson 7
+メモリ、主記憶装置(しゅきおくそうち),内存、内存储器、主存储器,memory,Lesson 7
+メモリインタリーブ,交错内存,memory interleave,Lesson 7
+メモリ管理(かんり)ユニット,内存管理单元,memory management unit、MMU,Lesson 7
+モジュール,模块,module,Lesson 7
+モデリング,建模,modeling,Lesson 7
+モデリング言語(げんご),建模语言,modeling language,Lesson 7
+戻り値(ち)、返り値(ち),返回值,return value,Lesson 7
+物(もの)のインターネット,物联网,Internet of Things、IoT,Lesson 7
+有限(ゆうげん)オートマトン,有限自动机、时序机,finite automata,Lesson 7
+読み書き(よみかき),读写,read and write,Lesson 7
+ライブマイグレーション,实时迁移,live migration,Lesson 8
+ラウンドロビン,轮询调度,Round-Robin,Lesson 8
+ランサムウェア,勒索软件,ransomware,Lesson 8
+リエントラント、再入可能(さいにゅうかのう),可重入,reentrant 、 re-entrant,Lesson 8
+リカーシブ、再帰(さいき),递归,recursive,Lesson 8
+リグレッションテスト、 回帰(かいき)テスト,回归测试,regression test,Lesson 8
+リスクベース認証(にんしょう),基于风险的认证,risk-based authentication,Lesson 8
+リゾルバ,解析器,resolver,Lesson 8
+リトルエンディアン,小端序、小尾序,little endian,Lesson 8
+リバースプロキシサーバ,反向代理服务器,reverse proxy server,Lesson 8
+リモート、遠隔(えんかく),远程,remote,Lesson 8
+隣接行列 (りんせつぎょうれつ),邻接矩阵,adjacency matrix,Lesson 8
+ルータ,路由器,router,Lesson 8
+ループ,循环,loop,Lesson 8
+レインボーテーブル,彩虹表,rainbow table,Lesson 8
+レジスタ,寄存器,register,Lesson 8
+レンダリング,渲染、着色,rendering,Lesson 8
+ロールバック,回滚、后滚,rollback,Lesson 8
+ロールフォワード,前滚,roll forward,Lesson 8
+ログ,日志,log,Lesson 8
+ログイン,登录,login,Lesson 8
+ワークアラウンド,解决方法,workaround,Lesson 8
+ワークパッケージ,工作包,work package,Lesson 8
+ワークフロー,工作流,workflow,Lesson 8
+ワイヤフレーム表現(ひょうげん),线框模型,wireframe model,Lesson 8
+16進数 (しんすう),16进制,hexadecimal,Lesson 9
+2進数 (しんすう),二进制,binary,Lesson 9
+2相(そう)コミット,二阶段提交,two-phase commit,Lesson 9
+8進数 (しんすう),8进制,octal,Lesson 9
+BNF記法(きほう),巴科斯范式,Backus-Naur form、BNF,Lesson 9
+B木(き),B树,B-tree,Lesson 9
+DNSキャッシュポイズニング,域名服务器缓存投毒、DNS缓存投毒、DNS污染,DNS cache poisoning、DNS cache pollution,Lesson 9
+E-R図(ず),ER模型、实体联系模型,entity-relationship model,Lesson 9
+IPアドレス,IP地址,IP address,Lesson 9
+IPマスカレード,IP伪装,IP masquerade,Lesson 9
+SEOポイズニング,SEO中毒,SEO poisoning,Lesson 9
+SQLインジェクション,SQL注入、SQL注码,SQL injection,Lesson 9
+キャプチャ,验证码,CAPTCHA,Lesson 9
+ソープ,简单对象访问协议,simple object access protocol、SOAP,Lesson 9
+発注（はっちゅう）,订货,Order,Lesson 10
+計画（けいかく）,计划,Plan,Lesson 10
+了解（りょうかい）,了解,Understood,Lesson 10
+来訪（らいほう）,来访,Visit,Lesson 10
+既存（きぞん）,原有，已有,Existing,Lesson 10
+大変（たいへん）,非常,Very,Lesson 10
+問題（もんだい）,问题,Problem,Lesson 10
+嬉しい（うれしい）,高兴,Happy,Lesson 10
+上期（かみき）,上半年,First Half,Lesson 10
+改善（かいぜん）,改善,Improvement,Lesson 10
+御社（おんしゃ）,贵公司,Your Company,Lesson 10
+拡大（かくだい）,扩大,Enlarge,Lesson 10
+チャレンジ,挑战,Challenge,Lesson 10
+立ち向かう（たちむかう）,面对,Face,Lesson 10
+覚悟（かくご）,精神准备，决心，觉悟，死心,Ready,Lesson 10
+引き続き（ひきつづき）,继续,Continued,Lesson 10
+委託（いたく）,委托,Consignment,Lesson 10
+実績（じっせき）,实际业绩,Achievements,Lesson 10
+指導（しどう）,指导,Instruction,Lesson 10
+組織（そしき）,组织,Organization,Lesson 10
+提案（ていあん）,建议,Proposal,Lesson 10
+体制（たいせい）,体制,System,Lesson 10
+プロジェクト,项目,Project,Lesson 10
+送付（そうふ）,发送,Sent,Lesson 10
+開発（かいはつ）,开发,Development,Lesson 10
+予定（よてい）,预定,Schedule,Lesson 10
+課題（かだい）,课题,Challenge,Lesson 10
+ソフトウェア,软件,Software,Lesson 10
+議論（ぎろん）,议论，讨论，争论,Discussion,Lesson 10
+交流（こうりゅう）,交流,Exchange,Lesson 10
+電話番号（でんわばんごう）,电话号码,Phone Number,Lesson 10
+ファックス,传真,Fax,Lesson 10
+ホームページ,主页,Homepage,Lesson 10
+テスト,测试，试验,Test,Lesson 10
+下期（しもき）,下半年,Second Half,Lesson 10
+日程（にってい）,日程,Dates,Lesson 11
+情報（じょうほう）,信息，情报,Information,Lesson 11
+進度（しんど）,进度,Progress,Lesson 11
+データ,数据,Data,Lesson 11
+管理（かんり）,管理,Management,Lesson 11
+プログラム,程序,Program,Lesson 11
+作成者（さくせいしゃ）,制作人,Creator,Lesson 11
+設計（せっけい）,设计,Design,Lesson 11
+審査（しんさ）,审查,Review,Lesson 11
+単体試験（たんたいしけん）,单体测试,Unit Test,Lesson 11
+承認（しょうにん）,审批，批准,Approval,Lesson 11
+コーディング,编码,Coding,Lesson 11
+調査（ちょうさ）,调查,Survey,Lesson 11
+ソース,源码,Source,Lesson 11
+項目（こうもく）,项目，小项，条目,Item,Lesson 11
+レビュー,检查，评审，复审,Review,Lesson 11
+担当（たんとう）,担当，负责,In Charge,Lesson 11
+ファイル,文件,File,Lesson 11
+外注（がいちゅう）,向外部订货,Outsourcing,Lesson 11
+チェック,检查,Check,Lesson 11
+全体（ぜんたい）,整体,Overall,Lesson 11
+設定（せってい）,设定，设置,Settings,Lesson 11
+作業（さぎょう）,工作,Work,Lesson 11
+応答（おうとう）,应答,Reply,Lesson 11
+伝達（でんたつ）,传达,Communication,Lesson 11
+受入試験（うけいれしけん）,验收测试,Acceptance Test,Lesson 11
+仕様（しよう）,式样，需求,Specifications,Lesson 11
+進捗（しんちょく）,进度,Progress,Lesson 12
+関連（かんれん）,相关、关联、有关系,Related,Lesson 12
+システム,系统,System,Lesson 12
+ドキュメント,文档,Document,Lesson 12
+印鑑（いんかん）,印章,Seal,Lesson 12
+至急（しきゅう）,加急，火速，赶快,Urgent,Lesson 12
+リーダー,组长、负责人,Leader,Lesson 12
+新規（しんき）,新建、新,New,Lesson 12
+サブリーダー,副组长,Sub Leader,Lesson 12
+イメージ,图像，印象,Image,Lesson 12
+モジュール,模块,Module,Lesson 12
+サンプル,样品、样本,Sample,Lesson 12
+行う（おこなう）,进行,Do,Lesson 12
+要望（ようぼう）,要求、迫切期望,Request,Lesson 12
+合理性（ごうりせい）,合理性,Rationality,Lesson 12
+上長（じょうちょう）,上级,Superior,Lesson 12
+完備性（かんびせい）,完整性,Completeness,Lesson 12
+コメント,注释,Comment,Lesson 12
+開始（かいし）,开始,Start,Lesson 12
+風を引く（かぜをひく）,感冒,Catch Cold,Lesson 12
+継続する（けいぞくする）,继续,Continue,Lesson 12
+遅れ（おくれ）,延迟，耽误,Delay,Lesson 12
+残業（ざんぎょう）,加班,Overtime,Lesson 12
+挽回（ばんかい）,挽回，耽误,Recovering,Lesson 12
+正しい（ただしい）,正确,Correct,Lesson 12
+対策（たいさく）,对策，应付的方法,Measures,Lesson 12
+インターフェース,接口,Interface,Lesson 12
+WT,走查,Wt,Lesson 13
+用語（ようご）,用语、术语,Terminology,Lesson 13
+実施（じっし）,实施,Implementation,Lesson 13
+分かりやすい（わかりやすい）,易懂,Easy To Understand,Lesson 13
+場所（ばしょ）,地点,Location,Lesson 13
+番号（ばんごう）,编号、号码,Number,Lesson 13
+カーニング,字距调整,Kerning,Lesson 13
+順番（じゅんばん）,顺序,Order,Lesson 13
+ルール,规则、规定,Rule,Lesson 13
+ボタン,按钮、按键,Button,Lesson 13
+最小値（さいしょうち）,最小值,Minimum Value,Lesson 13
+合わせる（あわせる）,使一致、对准,Match,Lesson 13
+コピー,拷贝、复制,Copy,Lesson 13
+詳しい（くわしい）,详细、精通、熟悉,Learn More,Lesson 13
+取り扱い説明書（とりあつかいせつめいしょ）,操作说明书,Instruction Manual,Lesson 13
+バージョン,版本,Version,Lesson 13
+文字（もじ）,文字、字符、字母,Characters,Lesson 13
+マニュアル,参考手册、说明书,Manual,Lesson 13
+フォント,字体,Font,Lesson 13
+指摘（してき）,指出、指摘,Point Out,Lesson 13
+ユーザ,用户,User,Lesson 13
+事項（じこう）,事项、项目,Things,Lesson 13
+見せる（みせる）,给~看,Show,Lesson 13
+日限（にちげん）,期限,Limited Time,Lesson 13
+必ず（かならず）,必须,Always,Lesson 13
+備考（びこう）,备注,Notes,Lesson 13
+敬語（けいご）,敬语,Honorific,Lesson 13
+訪問（ほうもん）,访问、来访,Visit,Lesson 14
+下旬（げじゅん）,下旬,Late,Lesson 14
+手配（てはい）,筹备、安排,Arrangements,Lesson 14
+連携（れんけい）,联合、协作、合作,Cooperation,Lesson 14
+強化（きょうか）,强化、加强,Strengthening,Lesson 14
+連絡（れんらく）,联系、联络,Contact,Lesson 14
+アピール,（有）魅力,Appeal,Lesson 14
+防ぐ（ふせぐ）,防止,Prevent,Lesson 14
+品質（ひんしつ）,质量,Quality,Lesson 14
+十分（じゅうぶん）,十分、充分、足够,Enough,Lesson 14
+用意（ようい）,准备、预备,Preparation,Lesson 14
+レベル,水平、级别,Level,Lesson 14
+パワーポイント,PPT演示资料,Power Point,Lesson 14
+協議（きょうぎ）,协议、协商、商议,Consultation,Lesson 14
+役立つ（やくだつ）,有用、有益,Useful,Lesson 14
+効率的（こうりつてき）,有效、高效,Efficient,Lesson 14
+アドバイス,劝告、忠告、建议,Advice,Lesson 14
+スキール,技能,Skill,Lesson 14
+恥ずかしい（はずかしい）,害羞、不好意思、难为情,Embarrassing,Lesson 14
+メンテナンス,维护,Maintenance,Lesson 14
+窓口（まどぐち）,窗口、中间联系人,Counter,Lesson 14
+設ける（もうける）,设置、建立、设立,Set Up,Lesson 14
+シート,表,Sheet,Lesson 15
+バイト,字节,Byte,Lesson 15
+メソッド,方法,Method,Lesson 15
+帳票（ちょうひょう）,表格,Report,Lesson 15
+出力（しゅつりょく）,输出,Output,Lesson 15
+誤り（あやまり）,错误,Error,Lesson 15
+古い（ふるい）,旧的,Old,Lesson 15
+和暦（われき）,和历，日本日历,Japanese Era,Lesson 15
+申し訳ない（もうしわけない）,对不起,Sorry,Lesson 15
+西暦（せいれき）,公历，阳历,Western Calendar,Lesson 15
+金額（きんがく）,金额,Amount,Lesson 15
+添付（てんぷ）,附加,Attachment,Lesson 15
+フィールド,字段，域,Field,Lesson 15
+添付ファイル,附件,Attachment,Lesson 15
+フォーマット,格式，版式,Format,Lesson 15
+参照（さんしょう）,参考，参照,See,Lesson 15
+日付（ひづけ）,日期,Date,Lesson 15
+クライアント,客户端,Client,Lesson 16
+テンポラリファイル,临时文件,Temporary File,Lesson 16
+環境（かんきょう）,环境,Environment,Lesson 16
+直接（ちょくせつ）,直接,Direct,Lesson 16
+動作（どうさ）,运行,Action,Lesson 16
+起動（きどう）,启动,Start Up,Lesson 16
+可能（かのう）,可能,Possible,Lesson 16
+経由（けいゆ）,经过,Via,Lesson 16
+サーバー,服务器,Server,Lesson 16
+ディレクトリ,目录,Directory,Lesson 16
+記述（きじゅつ）,记述,Description,Lesson 16
+ヘッダーファイル,头文件,Header File,Lesson 16
+接続（せつぞく）,连接,Connection,Lesson 16
+メニュー,菜单,Menu,Lesson 16
+テンプレート,模板,Template,Lesson 16
+ライブラリ,库,Library,Lesson 16
+パスワード,密码,Password,Lesson 16
+ダウンロード,下载,Download,Lesson 16
+アップロード,上载,Upload,Lesson 17
+図る（はかる）,谋求,Plan,Lesson 17
+テーブル,表,Table,Lesson 17
+条件（じょうけん）,条件,Conditions,Lesson 17
+登録（とうろく）,登录,Register,Lesson 17
+タブ画面,TAB画面,Tab Screen,Lesson 17
+表示（ひょうじ）,显示,Display,Lesson 17
+フレーム,帧,Frame,Lesson 17
+物質（ぶっしつ）,物质,Matter,Lesson 17
+ボディー,主体，身体,Body,Lesson 17
+クッキー,Cookie,Cookies,Lesson 17
+ワーク,工作,Work,Lesson 17
+クリア,清空,Clear,Lesson 17
+共有（きょうゆう）,共享,Share,Lesson 17
+格納（かくのう）,保存,Store,Lesson 17
+圧縮ファイル,压缩文件,Compressed File,Lesson 17
+部品（ぶひん）,组件,Parts,Lesson 17
+更新（こうしん）,更新,Update,Lesson 17
+削除（さくじょ）,删除,Delete,Lesson 17
+プロトコル,协议,Protocol,Lesson 18
+インクルード,包括,Include,Lesson 18
+実行環境（じっこうかんきょう）,执行环境，运行环境,Execution Environment,Lesson 18
+オブジェクトファイル,对象文件，目标文件,Object File,Lesson 18
+中身（なかみ）,内容，装在里面的东西,Contents,Lesson 18
+実行ファイル,执行文件,Executable File,Lesson 18
+リコンパイル,重新编译,Recompile,Lesson 18
+認証処理（にんしょうしょり）,识别，核对，鉴定,Authentication Process,Lesson 18
+エラーチェック,错误检查,Error Check,Lesson 18
+権限（けんげん）,权限,Authority,Lesson 18
+メイクファイル,生成文件,Make File,Lesson 18
+解析（かいせき）,解析，分析,Analysis,Lesson 18
+定義ファイル,定义文件,Definition File,Lesson 18
+つまり,换句话说，也就是说,In Other Words,Lesson 18
+仮テーブル（かりテーブル）,临时表,Temporary Table,Lesson 19
+複数（ふくすう）,多个，复数个,Multiple,Lesson 19
+正規部品（せいきぶひん）,正规组件,Genuine Parts,Lesson 19
+サブウインドウ,子窗口,Subwindow,Lesson 19
+アンカー,锚,Anchor,Lesson 19
+デフォルト,缺省，默认,Default,Lesson 19
+戻り先（もどりさき）,返回地，返回处,Return To,Lesson 19
+セット,设置,Set,Lesson 19
+ステータス,状态,Status,Lesson 19
+初期値（しょきち）,初始值,Initial Value,Lesson 19
+ばかり,刚刚，只是,Just,Lesson 19
+マウス,鼠标,Mouse,Lesson 19
+～済（ずみ）,结束，完成,~Paid,Lesson 19
+区切り（くぎり）,分割,Separate,Lesson 19
+取引先（とりひきさき）,顾客，交易方,Business Partner,Lesson 19
+呼び出し元（よびだしもと）,调用方,Caller,Lesson 19
+カンマ,逗号,Comma,Lesson 19
+抽出（ちゅうしゅつ）,筛选,Extraction,Lesson 20
+チェンジ,改变，更换,Change,Lesson 20
+満たす（みたす）,满足,Fill,Lesson 20
+カレント,当前,Current,Lesson 20
+機能する（きのうする）,起作用,It Works,Lesson 20
+隠す（かくす）,隐藏,Hide,Lesson 20
+記憶する（きおくする）,保存，记忆,Remember,Lesson 20
+サブミット,提交,Submit,Lesson 20
+以下（いか）,以下,Below,Lesson 21
+比較（ひかく）,比较,Comparison,Lesson 21
+以上（いじょう）,以上,That'S All,Lesson 21
+重量（じゅうりょう）,重量,Weight,Lesson 21
+ランク,等级,Rank,Lesson 21
+シフトキー,移位键，换挡键,Shift Key,Lesson 21
+但し（ただし）,但是,However,Lesson 21
+非表示（ひひょうじ）,隐藏，不显示,Hide,Lesson 21
+ヒストリーバック,返回,History Back,Lesson 21
+反映（はんえい）,反映,Reflection,Lesson 21
+某（ぼう）,某,A Certain,Lesson 22
+ヒートラン,发热试验,Heat Run,Lesson 22
+概説（がいせつ）,概要,Overview,Lesson 22
+限界試験（げんかいしけん）,边缘试验,Limit Test,Lesson 22
+総合（そうごう）,综合,General,Lesson 22
+負荷（ふか）,负荷,Load,Lesson 22
+デモシステム,示范系统，演示系统,Demonstration System,Lesson 22
+割愛（かつあい）,忍痛割爱,Omitted,Lesson 22
+列挙（れっきょ）,列举，枚举,Enumeration,Lesson 22
+踏襲（とうしゅう）,继承,Follow,Lesson 22
+対象外（たいしょうがい）,对应范围外,Not Applicable,Lesson 22
+バリエージョン,变化,Variation,Lesson 22
+出荷（しゅっか）,出厂，出库,Shipment,Lesson 22
+推奨（すいしょう）,推荐,Recommended,Lesson 22
+ほど,程度,How,Lesson 22
+データフロー,数据流,Dataflow,Lesson 22
+ブラウザ,浏览器,Browser,Lesson 22
+有する（ゆうする）,拥有，持有,Have,Lesson 22
+連続実行（れんぞくじっこう）,连续运行,Continuous Execution,Lesson 22
+階層（かいそう）,阶层，层次,Hierarchy,Lesson 22
+ミドルウェア,中间件,Middleware,Lesson 22
+分散（ぶんさん）,分散,Dispersion,Lesson 22
+イントラネット,企业内部网,Intranet,Lesson 22
+排他処理（はいたしょり）,排斥处理,Exclusive Treatment,Lesson 22
+～度目（どめ）,第~次,~The Last Time,Lesson 22
+履歴（りれき）,历史记录,History,Lesson 23
+リンク,链接,Link,Lesson 23
+インクリメント,增加，增量,Increment,Lesson 23
+遷移（せんい）,跳转，转移,Transition,Lesson 23
+正常処理（せいじょうしょり）,正常处理,Normal Processing,Lesson 23
+バナー,标题,Banner,Lesson 23
+レイアウト,布局，格式,Layout,Lesson 23
+以降（いこう）,以后,From Now On,Lesson 23
+来期（らいき）,下次,Next Season,Lesson 23
+目視確認（もくしかくにん）,目视确认,Visual Check,Lesson 23
+合否（ごうひ）,合格与否,Passing And Failing,Lesson 23
+ログアウト,注销退出程序,Log Out,Lesson 23
+異常処理（いじょうしょり）,异常处理,Abnormal Processing,Lesson 24
+未接続（みせつぞく）,未连接,Unconnected,Lesson 24
+自体（じたい）,本身,Itself,Lesson 24
+且つ（かつ）,而且，并且,And,Lesson 24
+全角（ぜんかく）,全角,Full-Width,Lesson 24
+半角（はんかく）,半角,Half-Width,Lesson 24
+種別（しゅべつ）,分类，类别,Type,Lesson 24
+~のみ,只有，只是,~Only,Lesson 24
+存在（そんざい）,存在,Existence,Lesson 24
+ラベル,标签,Label,Lesson 24
+プルダウンメニュー,下拉菜单,Pulldown Menu,Lesson 24
+適切（てきせつ）,适当,Appropriate,Lesson 24
+値（あたい）,值,Value,Lesson 24
+入力値（にゅうりょくち）,输入值,Input Value,Lesson 24
+重複（じゅうふく）,重复,Duplicate,Lesson 24
+空白（くうはく）,空白,Blank,Lesson 25
+～において,于，在,In,Lesson 25
+超える（こえる）,超过，超越,Over,Lesson 25
+除く（のぞく）,除外，除了,Excluded,Lesson 25
+逆転（ぎゃくてん）,逆转，倒置，相反,A Reversal,Lesson 25
+旨（むね）,宗旨，目的,Mune,Lesson 25
+遡る（さかのぼる）,回溯，追溯,Go Back,Lesson 25
+与える（あたえる）,给予，使蒙受,Give,Lesson 25
+～まま,照旧，原封不动,~Remain,Lesson 25
+～ず,表示否定,~Zu,Lesson 25
+網羅（もうら）,包罗，涵盖,Covered,Lesson 25
+判定欄（はんていらん）,判定栏,Judgment Field,Lesson 25
+納入（のうにゅう）,交货、交纳,Delivery,Lesson 26
+新たに（あらたに）,新、重新,New,Lesson 26
+構造図（こうぞうず）,结构图,Structural Diagram,Lesson 26
+省略（しょうりゃく）,省略,Omitted,Lesson 26
+太線（ふとせん）,粗线,Thick Line,Lesson 26
+設置（せっち）,设定、设置,Installation,Lesson 26
+集計（しゅうけい）,合计、汇总,Aggregation,Lesson 26
+改札機（かいさつき）,检票机,Ticket Gate,Lesson 26
+券売機（けんばいき）,售票机,Ticket Machine,Lesson 26
+精算機（せいさんき）,清算机,Settlement Machine,Lesson 26
+定期券（ていきけん）,定期票、月票、季票,Commuter Pass,Lesson 26
+さまざま,各种,Various,Lesson 26
+手段（しゅだん）,手段,Means,Lesson 26
+蓄積（ちくせき）,存储，积累,Accumulation,Lesson 26
+用いる（もちいる）,使用、利用,Used,Lesson 26
+アタッチ,连接,Attach,Lesson 26
+公開（こうかい）,公开,Public,Lesson 26
+改変（かいへん）,改变,Modification,Lesson 26
+書き込む（かきこむ）,写入,Write,Lesson 26
+マシン,机器,Machine,Lesson 26
+インストール,安装,Installation,Lesson 26
+自解凍（じかいとう）,自解压,Self-Thawing,Lesson 26
+パッケージ,包,Package,Lesson 26
+稼動（かどう）,运行、劳动,Operating,Lesson 26
+配置ファイル,配置文件,Placement File,Lesson 26
+ハードディスク,硬盘,Hard Disk,Lesson 26
+不正（ふせい）,非法,Fraud,Lesson 26
+顧客（こきゃく）,顾客,Customers,Lesson 27
+満足度（まんぞくど）,满意度,Satisfaction Level,Lesson 27
+平素（へいそ）,平时,Heise,Lesson 27
+格別（かくべつ）,特别,Exceptional,Lesson 27
+誠に（まことに）,真的,Seriously,Lesson 27
+貴社（きしゃ）,贵公司,Your Company,Lesson 27
+一段落つく（いちだんらくつく）,告一段落,It'S Finished,Lesson 27
+問（しつもん）,提问,Question,Lesson 27
+幸甚（こうじん）,十分荣幸,Kojin,Lesson 27
+貴重（きちょう）,贵重,A Precious,Lesson 27
+理由（りゆう）,理由,Reason,Lesson 27
+契約書（けいやくしょ）,合同书,Contract,Lesson 27
+無償（むしょう）,无偿,Free,Lesson 27
+保障（ほしょう）,保证,Guarantee,Lesson 27
+前提（ぜんてい）,前提,Assumptions,Lesson 27
+構わない（かまわない）,没有关系，介意,It'S Okay,Lesson 27
+遠慮（えんりょ）,客气,Relaxed,Lesson 27
+幸い（さいわい）,幸运,Luckily,Lesson 27
+タイムリー,及时的、适时的、恰好的,Timely,Lesson 28
+タイミング,时机,Timing,Lesson 28
+対処（たいしょ）,处理、应付、对付,Solution,Lesson 28
+リスク,风险,Risk,Lesson 28
+スリル,惊险、刺激、紧张感,Thrill,Lesson 28
+取り組む（とりくむ）,努力、专注,Working On,Lesson 28
+恥をかく（はじをかく）,丢脸、出丑,Shame,Lesson 28
+インターン,实习生,Intern,Lesson 28
+プラスになる,有利,Beneficial,Lesson 28
+こなす,处理、掌握,Handle,Lesson 28
+活躍（かつやく）,活跃、活动,Working,Lesson 28
+やる気（やるき）,干劲,Motivation,Lesson 28
+置いていかれる（おいていかれる）,被搁置一旁,Left Behind,Lesson 28
+ハキハキ,干脆、爽快,Clear,Lesson 28
+コミュニケーション,沟通、交流,Communication,Lesson 28
+大切（たいせつ）,重要；珍贵,Important,Lesson 28
+モチベーション,积极性、动力,Motivation,Lesson 28
+無愛想（ぶあいそう）,态度简慢、不和,Unfriendly,Lesson 28
+発想（はっそう）,构思、主意,Ideas,Lesson 29
+由来（ゆらい）,来历、由来,Origin,Lesson 29
+一生懸命（いっしょうけんめい）,拼命地、努力地,Isshokenmei,Lesson 29
+軽い（かるい）,轻微,Light,Lesson 29
+度合い（どあい）,程度,Degree,Lesson 29
+撲滅（ぼくめつ）,扑灭、消灭,Eradication,Lesson 29
+見方（みかた）,见解、想法,Viewpoint,Lesson 29
+外見（がいけん）,外观、外表,Appearance,Lesson 29
+みすぼらしい,破旧、难看,Shabby,Lesson 29
+身なり（みなり）,服饰、装束,Appearance,Lesson 29
+町並み（まちなみ）,街道风貌,Townscape,Lesson 29
+拘る（こだわる）,讲究、拘泥,Be Particular,Lesson 29
+鷹揚（おうよう）,落落大方,Ooyou,Lesson 29
+見栄え（みばえ）,美观,Appearance,Lesson 29
+一方（いっぽう）,一个劲地、一直,Meanwhile,Lesson 29
+次第（しだい）,缘由、经过,Depending,Lesson 29
+納める（おさめる）,提交、收下,Submit,Lesson 29
+専念（せんねん）,专心致志,Concentrate,Lesson 29
+なだめる,劝解、安抚,Appease,Lesson 29
+静める（しずめる）,使镇静,Squeal,Lesson 29
+苛立つ（いらだつ）,焦躁、急不可待,Irritated,Lesson 29
+失墜（しっつい）,失掉、丧失,Fallen,Lesson 29
+個人プレー,单打独斗,Individual Play,Lesson 29
+持論（じろん）,一贯主张,My Theory,Lesson 29
+右往左往（うおうさおう）,不知所措,Uosaou,Lesson 29
+最善（さいぜん）,最好、全力,Best,Lesson 29
+滅ぼす（ほろぼす）,毁灭,Destroy,Lesson 29
+及ばず（およばず）,达不到、不必,Not Enough,Lesson 29
+惑わす（まどわす）,诱惑、扰乱,To Mislead,Lesson 29
+折角（せっかく）,难得、好不容易,Finally,Lesson 29
+チームワーク,团队合作,Team Work,Lesson 29
+溶け込む（とけこむ）,融洽，溶入,Blend,Lesson 30
+くれぐれも,反复、周到,Please,Lesson 30
+総じて（そうじて）,概括地、一般地说来,Overall,Lesson 30
+ののしる,咒骂,Curse,Lesson 30
+先日（せんじつ）,前几天、上次,Recently,Lesson 30
+名乗る（なのる）,自报姓名,Introduce,Lesson 30
+極力（きょくりょく）,极力、尽力,Utmost,Lesson 30
+些細（ささい）,琐碎、不重要,Minor,Lesson 30
+〜振り（〜ぶり）,样子、经过,~Spend,Lesson 30
+聞き取る（ききとる）,听见、听懂,Listen,Lesson 30
+耐え忍ぶ（たえしのぶ）,忍受,Endure,Lesson 30
+けんからん,下流、无耻,Vulgar,Lesson 30
+あてる,充作、安排用途,Apply,Lesson 30
+習得（しゅうとく）,学会、掌握,Learning,Lesson 30
+貶す（けなす）,贬低,Demean,Lesson 30
+バイト（アルバイト）,打工,Part-Time,Lesson 30
+罵倒（ばとう）,大骂,Insults,Lesson 30
+マスター,精通、熟练,Master,Lesson 30
+乗用車（じょうようしゃ）,轿车,Passenger Car,Lesson 30
+掲げる（かかげる）,悬挂,Display,Lesson 30
+反物（たんもの）,绸缎,Fabric,Lesson 30
+プレッシャー,压力,Pressure,Lesson 30
+見かける（みかける）,偶然看到,See,Lesson 30
+いい加減（いいかげん）,敷衍、马虎,Careless,Lesson 30
+ルーズ,松懈、吊儿郎当,Loose,Lesson 30
+お詫び（おわび）,道歉、赔不是,Apologies,Lesson 30
+プロジェクト,项目,Project,Lesson 31
+単体テスト,单元测试,Unit Test,Lesson 31
+直近（ちょっきん）プロジェクト,最近项目,Latest Project,Lesson 31
+デバッグ,调试,Debug,Lesson 31
+ブラウザ,浏览器,Browser,Lesson 31
+テストケース，テスト項目,测试点,Test Cases,Lesson 31
+バックエンド,后端,Backend,Lesson 31
+フロントエンド,前端,Front End,Lesson 31
+テストコード,测试代码,Test Code,Lesson 31
+引数、パラメータ,参数,Parameters,Lesson 31
+関数,函数,Function,Lesson 31
+定数,常量,Constant,Lesson 31
+変数,变量,Variable,Lesson 31
+戻り値,返回值,Return Value,Lesson 31
+カラム,字段,Column,Lesson 31
+データ型,数据类型,Data Type,Lesson 31
+ジャバ, ,Java,Lesson 31
+ジャバスクリプト, ,JavaScript,Lesson 31
+タイプスクリプト, ,TypeScript,Lesson 31
+スプリング,,Spring,Lesson 31
+スプリングブート, ,SpringBoot,Lesson 31
+マイバティス,,MyBatis,Lesson 31
+タイムリーフ, ,Thymeleaf,Lesson 31
+ビュー・ジェイエス, ,Vue.js,Lesson 31
+オラクル, ,Oracle,Lesson 31
+ポストグレエスキューエル, ,PostgreSQL,Lesson 31
+マイエスキューエル, ,MySQL,Lesson 31
+エスキューエル/シークェル, ,SQL,Lesson 31
+既存（きぞん）,已有,Existing,Lesson 31
+詳細設計（しょうさいせっけい）,详细设计,Detailed Design,Lesson 31
+工程（こうてい）,工程,Process,Lesson 31

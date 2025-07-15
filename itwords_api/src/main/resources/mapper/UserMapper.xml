@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.itwordslearning.mapper.UserMapper">
+
+<select id="findUserByUsername" resultType="com.example.itwordslearning.entity.User">
+SELECT user_id, username, password
+FROM users
+WHERE username = #{username}
+</select>
+
+<select id="findUserSettingsByUserId" resultType="com.example.itwordslearning.entity.UserSettings">
+SELECT user_id, font_size, background_color
+FROM user_settings
+WHERE user_id = #{userId}
+</select>
+
+<insert id="insertUser" parameterType="com.example.itwordslearning.entity.User" useGeneratedKeys="true" keyProperty="userId">
+INSERT INTO users (username, password)
+VALUES (#{username}, #{password})
+</insert>
+
+<insert id="insertUserSettings" parameterType="com.example.itwordslearning.entity.UserSettings">
+INSERT INTO user_settings (user_id, font_size, background_color)
+VALUES (#{userId}, #{fontSize}, #{backgroundColor})
+</insert>
+
+<update id="updateUserSettings" parameterType="com.example.itwordslearning.entity.UserSettings">
+UPDATE user_settings
+SET font_size = #{fontSize},
+background_color = #{backgroundColor}
+WHERE user_id = #{userId}
+</update>
+</mapper>

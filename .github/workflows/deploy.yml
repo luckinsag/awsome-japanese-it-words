@@ -1,0 +1,180 @@
+name: Deploy to AWS EC2
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: '部署环境'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+        - production
+        - staging
+
+env:
+  EC2_IP: ${{ secrets.EC2_IP }}
+  EC2_USER: ${{ secrets.EC2_USER }}
+  KEY_FILE: ./deploy-key.pem
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+    
+    - name: Cache Maven packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+    
+    - name: Test Backend
+      run: |
+        cd itwords_api
+        mvn test
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: itwords_display/package-lock.json
+    
+    - name: Test Frontend
+      run: |
+        cd itwords_display
+        npm ci
+        npm run build
+
+  build-and-deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.event_name == 'workflow_dispatch'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: itwords_display/package-lock.json
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Create EC2 key file
+      run: |
+        echo "${{ secrets.EC2_PRIVATE_KEY }}" > $KEY_FILE
+        chmod 400 $KEY_FILE
+    
+    - name: Build and push Docker images
+      env:
+        DOCKER_DEFAULT_PLATFORM: linux/amd64
+      run: |
+        # 构建后端镜像
+        echo "构建后端镜像..."
+        docker-compose build --no-cache backend
+        docker tag itwords4-backend:latest backend:latest
+        
+        # 构建前端镜像
+        echo "构建前端镜像..."
+        docker-compose build --no-cache frontend
+        docker tag itwords4-frontend:latest frontend:latest
+        
+        # 保存镜像
+        mkdir -p deploy-images
+        docker save backend:latest -o deploy-images/backend.tar
+        docker save frontend:latest -o deploy-images/frontend.tar
+        tar -czf deploy-images.tar.gz -C deploy-images .
+    
+    - name: Deploy to EC2
+      run: |
+        # 传输镜像
+        scp -i $KEY_FILE -o StrictHostKeyChecking=no deploy-images.tar.gz $EC2_USER@$EC2_IP:~/itwords-images/
+        
+        # 传输配置文件
+        scp -i $KEY_FILE -o StrictHostKeyChecking=no docker-compose.yml $EC2_USER@$EC2_IP:~/itwords-images/deploy-compose.yml
+        scp -i $KEY_FILE -o StrictHostKeyChecking=no scripts/data-processing/init.sql $EC2_USER@$EC2_IP:~/itwords-images/init.sql 2>/dev/null || echo "init.sql 不存在，跳过"
+        scp -i $KEY_FILE -o StrictHostKeyChecking=no complete_wordlist.csv $EC2_USER@$EC2_IP:~/itwords-images/ 2>/dev/null || echo "complete_wordlist.csv 不存在，跳过"
+        
+        # 在EC2上部署
+        ssh -i $KEY_FILE -o StrictHostKeyChecking=no $EC2_USER@$EC2_IP << 'EOF'
+            cd ~/itwords-images
+            
+            # 停止现有容器
+            docker-compose -f deploy-compose.yml down -v 2>/dev/null || true
+            docker system prune -f
+            
+            # 解压并加载镜像
+            tar -xzf deploy-images.tar.gz
+            docker load -i backend.tar
+            docker load -i frontend.tar
+            
+            # 清理临时文件
+            rm -f *.tar deploy-images.tar.gz
+            
+            # 启动应用
+            docker-compose -f deploy-compose.yml up -d
+            
+            # 等待服务启动
+            echo "等待服务启动..."
+            sleep 30
+            
+            # 检查状态
+            docker-compose -f deploy-compose.yml ps
+            
+            # 测试连接
+            sleep 10
+            curl -f http://localhost:8080/actuator/health || echo "后端API测试失败"
+            curl -f http://localhost || echo "前端测试失败"
+EOF
+    
+    - name: Verify deployment
+      run: |
+        # 等待服务完全启动
+        sleep 60
+        
+        # 测试外部访问
+        echo "测试外部访问..."
+        curl -f http://$EC2_IP:8080/actuator/health || echo "后端API外部访问失败"
+        curl -f http://$EC2_IP || echo "前端外部访问失败"
+    
+    - name: Cleanup
+      if: always()
+      run: |
+        rm -f $KEY_FILE
+        rm -rf deploy-images
+        rm -f deploy-images.tar.gz
+    
+    - name: Deployment Status
+      if: always()
+      run: |
+        if [ "${{ job.status }}" == "success" ]; then
+          echo "✅ 部署成功！"
+          echo "🌐 应用地址: http://$EC2_IP"
+          echo "🔧 后端API: http://$EC2_IP:8080"
+        else
+          echo "❌ 部署失败！"
+          echo "请检查日志获取详细信息"
+        fi 

@@ -1,0 +1,27 @@
+{
+  "name": "itwordslearning",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@mdi/font": "^7.4.47",
+    "axios": "^1.9.0",
+    "echarts": "^5.6.0",
+    "pinia": "^3.0.3",
+    "vue": "^3.3.4",
+    "vue-echarts": "^7.0.3",
+    "vue-router": "^4.2.4",
+    "vue3-toastify": "^0.2.8",
+    "vuetify": "^3.8.8"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.3.4",
+    "vite": "^5.0.0",
+    "vite-plugin-vuetify": "^2.0.0"
+  }
+}
