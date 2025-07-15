@@ -164,7 +164,7 @@ jobs:
       run: |
         # 检查EC2连接
         echo "检查EC2连接..."
-        ssh -i $KEY_FILE -o StrictHostKeyChecking=no -o ConnectTimeout=10 $EC2_USER@$EC2_IP "echo 'EC2连接成功'" || {
+        ssh -i $KEY_FILE -o StrictHostKeyChecking=no -o ConnectTimeout=10 $EC2_USER@$EC2_IP "echo \"EC2连接成功\"" || {
           echo "❌ 无法连接到EC2实例"
           exit 1
         }
@@ -266,13 +266,13 @@ EOF
             
             # 检测Docker Compose命令
             if command -v docker-compose >/dev/null 2>&1; then
-                COMPOSE_CMD='docker-compose'
-                echo '使用docker-compose命令'
+                COMPOSE_CMD=\"docker-compose\"
+                echo \"使用docker-compose命令\"
             elif docker compose version >/dev/null 2>&1; then
-                COMPOSE_CMD='docker compose'
-                echo '使用docker compose命令'
+                COMPOSE_CMD=\"docker compose\"
+                echo \"使用docker compose命令\"
             else
-                echo '❌ 未找到Docker Compose命令'
+                echo \"❌ 未找到Docker Compose命令\"
                 exit 1
             fi
             
@@ -280,37 +280,37 @@ EOF
             \$COMPOSE_CMD -f deploy-compose.yml down -v 2>/dev/null || true
             
             # 清理Docker系统（兼容旧版本）
-            echo '清理Docker系统...'
+            echo \"清理Docker系统...\"
             docker container prune -f 2>/dev/null || true
             docker image prune -f 2>/dev/null || true
             docker volume prune -f 2>/dev/null || true
             docker network prune -f 2>/dev/null || true
             
             # 解压并加载镜像
-            echo '解压镜像文件...'
+            echo \"解压镜像文件...\"
             tar -xzf deploy-images.tar.gz
             
-            echo '加载后端镜像...'
+            echo \"加载后端镜像...\"
             docker load -i backend.tar
             
-            echo '加载前端镜像...'
+            echo \"加载前端镜像...\"
             docker load -i frontend.tar
             
             # 显示加载的镜像
-            echo '加载完成的镜像列表:'
+            echo \"加载完成的镜像列表:\"
             docker images
             
             # 清理临时文件
             rm -f *.tar deploy-images.tar.gz
             
-            echo '启动应用...'
+            echo \"启动应用...\"
             \$COMPOSE_CMD -f deploy-compose.yml up -d
             
             # 等待服务启动
-            echo '等待服务启动...'
+            echo \"等待服务启动...\"
             for i in {1..60}; do
-                if \$COMPOSE_CMD -f deploy-compose.yml ps | grep -q 'Up'; then
-                    echo '✅ 服务已启动'
+                if \$COMPOSE_CMD -f deploy-compose.yml ps | grep -q \"Up\"; then
+                    echo \"✅ 服务已启动\"
                     break
                 fi
                 echo \"等待中... (\$i/60)\"
@@ -318,11 +318,11 @@ EOF
             done
             
             # 检查服务状态
-            echo '检查服务状态:'
+            echo \"检查服务状态:\"
             \$COMPOSE_CMD -f deploy-compose.yml ps
             
             # 检查服务健康状态
-            echo '检查服务健康状态:'
+            echo \"检查服务健康状态:\"
             \$COMPOSE_CMD -f deploy-compose.yml logs --tail=50
         "
     
