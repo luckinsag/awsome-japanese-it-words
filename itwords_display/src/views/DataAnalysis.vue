@@ -161,7 +161,10 @@ export default {
       if (!dateString) return ''
       
       try {
-        console.log('格式化时间，原始数据:', dateString, '类型:', typeof dateString)
+        const isDev = import.meta.env.DEV
+        if (isDev) {
+          console.log('格式化时间，原始数据:', dateString, '类型:', typeof dateString)
+        }
         
         let date
         
@@ -191,7 +194,9 @@ export default {
           return dateString // 返回原始字符串
         }
         
-        console.log('转换后的Date对象:', date)
+        if (isDev) {
+          console.log('转换后的Date对象:', date)
+        }
         
         // 使用 toLocaleString 格式化时间
         const formattedDate = date.toLocaleString('ja-JP', {
@@ -204,7 +209,9 @@ export default {
           timeZone: 'Asia/Tokyo' // 明确指定时区
         })
         
-        console.log('格式化后的时间:', formattedDate)
+        if (isDev) {
+          console.log('格式化后的时间:', formattedDate)
+        }
         return formattedDate
         
       } catch (error) {

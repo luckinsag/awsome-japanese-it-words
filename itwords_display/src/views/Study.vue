@@ -216,7 +216,10 @@ export default {
       this.loading = true
       this.error = null
       try {
-        console.log('Fetching words with range:', this.lessonRange)
+        const isDev = import.meta.env.DEV
+        if (isDev) {
+          console.log('Fetching words with range:', this.lessonRange)
+        }
         let response
         // 如果选择了全部课程，使用 getAllWords
         if (this.lessonRange.start === '1' && this.lessonRange.end === '31') {
@@ -228,11 +231,15 @@ export default {
             this.lessonRange.end
           )
         }
-        console.log('Received response:', response)
+        if (isDev) {
+          console.log('Received response:', response)
+        }
         if (response && response.data && response.data.data) {
           this.words = response.data.data
           this.currentIndex = 0
-          console.log('Updated words:', this.words)
+          if (isDev) {
+            console.log('Updated words:', this.words)
+          }
         } else {
           console.error('Invalid response format:', response)
           this.words = []

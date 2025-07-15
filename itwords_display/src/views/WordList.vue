@@ -289,10 +289,15 @@ export default {
     searchText: '',
     notesCache: new Map(),
     isLoadingNotes: false,
+    // 添加一个Set来跟踪哪些单词有笔记
+    wordsWithNotes: new Set(),
   }),
   computed: {
     filteredWords() {
-      console.log('filteredWords 计算，searchText:', this.searchText);
+      const isDev = import.meta.env.DEV
+      if (isDev) {
+        console.log('filteredWords 计算，searchText:', this.searchText);
+      }
       if (!this.searchText) return this.words;
       const keyword = this.searchText.trim().toLowerCase();
       return this.words.filter(word => {
@@ -323,7 +328,10 @@ export default {
       this.loading = true
       this.error = null
       try {
-        console.log('Fetching words with range:', this.lessonRange)
+        const isDev = import.meta.env.DEV
+        if (isDev) {
+          console.log('Fetching words with range:', this.lessonRange)
+        }
         let response
         // 如果选择了全部课程，使用 getAllWords
         if (this.lessonRange.start === '1' && this.lessonRange.end === '31') {
@@ -335,7 +343,9 @@ export default {
             this.lessonRange.end
           )
         }
-        console.log('Received response:', response)
+        if (isDev) {
+          console.log('Received response:', response)
+        }
         if (response && response.data && response.data.data) {
           this.words = response.data.data
           // 标记重点单词
@@ -347,10 +357,12 @@ export default {
             word.isImportant = this.importantWordIds.includes(wid)
           })
           
-          // 异步加载笔记内容
-          this.loadNotesAsync()
+          // 只为重点单词异步加载笔记内容
+          this.loadNotesForImportantWords()
           
-          console.log('Updated words:', this.words)
+          if (isDev) {
+            console.log('Updated words:', this.words)
+          }
         } else {
           console.error('Invalid response format:', response)
           this.words = []
@@ -385,7 +397,10 @@ export default {
 
     // 播放日语发音
     async playAudio(word) {
-      console.log('Playing audio for:', word.japanese)
+      const isDev = import.meta.env.DEV
+      if (isDev) {
+        console.log('Playing audio for:', word.japanese)
+      }
       
       try {
         // 使用 Web Speech API
@@ -401,7 +416,9 @@ export default {
           window.speechSynthesis.speak(utterance)
         })
         
-        console.log('Speech synthesis completed')
+        if (isDev) {
+          console.log('Speech synthesis completed')
+        }
       } catch (error) {
         console.error('Speech synthesis failed:', error)
         this.$nextTick(() => {
@@ -416,7 +433,10 @@ export default {
 
     // 切换重要标记
     async toggleImportant(item) {
-      console.log('当前item:', item);
+      const isDev = import.meta.env.DEV
+      if (isDev) {
+        console.log('当前item:', item);
+      }
       const userId = this.userStore.userId || (JSON.parse(localStorage.getItem('user')||'{}').userId)
       if (!userId) {
         this.showSnackbar('ログインしてください', 'error')
@@ -430,7 +450,9 @@ export default {
             wordId: Number(item.wordId),
             memo: null
           }
-          console.log('添加重点单词请求体:', requestBody);
+          if (isDev) {
+            console.log('添加重点单词请求体:', requestBody);
+          }
           const res = await wordService.addToImportantWords(requestBody)
           if (res.data && res.data.code === 200) {
             item.isImportant = true
@@ -450,11 +472,17 @@ export default {
             userId: Number(userId),
             wordId: Number(item.wordId)
           }
-          console.log('删除重点单词请求体:', requestBody);
+          if (isDev) {
+            console.log('删除重点单词请求体:', requestBody);
+          }
           const res = await wordService.deleteFromImportantWords(requestBody)
           if (res.data && res.data.code === 200) {
             item.isImportant = false
             this.importantWordIds = this.importantWordIds.filter(id => id !== item.wordId)
+            // 清除笔记缓存
+            this.notesCache.delete(item.wordId)
+            this.wordsWithNotes.delete(item.wordId)
+            item.note = ''
             this.showSnackbar('重要単語から削除しました', 'success')
           } else {
             this.showSnackbar('削除に失敗しました', 'error')
@@ -487,8 +515,8 @@ export default {
       this.noteDialog = true
     },
 
-    // 异步加载笔记内容
-    async loadNotesAsync() {
+    // 只为重点单词异步加载笔记内容
+    async loadNotesForImportantWords() {
       if (this.isLoadingNotes) return
       this.isLoadingNotes = true
       
@@ -498,39 +526,73 @@ export default {
         return
       }
 
-      // 获取需要加载笔记的单词ID
-      const wordIdsToLoad = this.words
-        .filter(word => {
-          const wid = word.wordId !== undefined ? word.wordId : word.id
-          return !this.notesCache.has(wid)
-        })
-        .map(word => word.wordId !== undefined ? word.wordId : word.id)
+      // 只获取重点单词的笔记
+      const importantWords = this.words.filter(word => {
+        const wid = word.wordId !== undefined ? word.wordId : word.id
+        return this.importantWordIds.includes(wid) && !this.notesCache.has(wid)
+      })
 
-      if (wordIdsToLoad.length === 0) {
-        // 如果所有笔记都在缓存中，直接使用缓存
+      if (importantWords.length === 0) {
+        // 如果所有重点单词的笔记都在缓存中，直接使用缓存
         this.words.forEach(word => {
           const wid = word.wordId !== undefined ? word.wordId : word.id
-          word.note = this.notesCache.get(wid) || ''
+          if (this.importantWordIds.includes(wid)) {
+            word.note = this.notesCache.get(wid) || ''
+          } else {
+            word.note = '' // 非重点单词不显示笔记
+          }
         })
         this.isLoadingNotes = false
         return
       }
 
       try {
-        // 分批加载笔记，每批10个
-        const batchSize = 10
-        for (let i = 0; i < wordIdsToLoad.length; i += batchSize) {
-          const batch = wordIdsToLoad.slice(i, i + batchSize)
-          const promises = batch.map(async (wordId) => {
+        // 使用批量API一次性获取所有重点单词的笔记
+        const wordIds = importantWords.map(word => word.wordId !== undefined ? word.wordId : word.id)
+        const batchRes = await wordService.getBatchNotes(wordIds, userId)
+        
+        if (batchRes.data && batchRes.data.code === 200) {
+          const notesMap = batchRes.data.data || {}
+          
+          // 更新缓存和单词对象
+          importantWords.forEach(word => {
+            const wordId = word.wordId !== undefined ? word.wordId : word.id
+            const note = notesMap[wordId] || ''
+            this.notesCache.set(wordId, note)
+            if (note) {
+              this.wordsWithNotes.add(wordId)
+            }
+            word.note = note
+          })
+        }
+      } catch (e) {
+        // 如果批量API失败，回退到单个请求方式
+        const isDev = import.meta.env.DEV
+        if (isDev) {
+          console.warn('批量获取笔记失败，回退到单个请求:', e)
+        }
+        
+        // 分批加载笔记，每批5个（减少并发请求）
+        const batchSize = 5
+        for (let i = 0; i < importantWords.length; i += batchSize) {
+          const batch = importantWords.slice(i, i + batchSize)
+          const promises = batch.map(async (word) => {
+            const wordId = word.wordId !== undefined ? word.wordId : word.id
             try {
               const noteRes = await wordService.getNoteByWordId(wordId, userId)
               if (noteRes.data && noteRes.data.code === 200) {
                 const note = noteRes.data.data || ''
                 this.notesCache.set(wordId, note)
+                if (note) {
+                  this.wordsWithNotes.add(wordId)
+                }
                 return { wordId, note }
               }
             } catch (e) {
-              console.error(`获取笔记失败 wordId: ${wordId}`, e)
+              // 404错误不记录日志，这是正常的
+              if (e.response?.status !== 404) {
+                console.error(`获取笔记失败 wordId: ${wordId}`, e)
+              }
             }
             return { wordId, note: '' }
           })
@@ -543,8 +605,6 @@ export default {
             }
           })
         }
-      } catch (e) {
-        console.error('批量获取笔记失败:', e)
       } finally {
         this.isLoadingNotes = false
       }
@@ -583,12 +643,20 @@ export default {
           wordId: Number(this.currentItem.wordId),
           memo: memoContent
         }
-        console.log('保存笔记请求体:', noteDTO, 'userId:', userId)
+        const isDev = import.meta.env.DEV
+        if (isDev) {
+          console.log('保存笔记请求体:', noteDTO, 'userId:', userId)
+        }
         const res = await wordService.saveNote(noteDTO, userId)
         if (res.data && res.data.code === 200) {
           this.currentItem.note = memoContent
           // 更新缓存
           this.notesCache.set(this.currentItem.wordId, memoContent)
+          if (memoContent) {
+            this.wordsWithNotes.add(this.currentItem.wordId)
+          } else {
+            this.wordsWithNotes.delete(this.currentItem.wordId)
+          }
           this.showSnackbar('保存しました', 'success')
         } else {
           this.showSnackbar('保存に失敗しました', 'error')
@@ -603,7 +671,6 @@ export default {
     // 切换笔记展开/收起
     toggleNoteExpand(item) {
       const key = item.wordId !== undefined ? item.wordId : item.id;
-      console.log('toggleNoteExpand item:', item, 'key:', key);
       this.expandedNotes[key] = !this.expandedNotes[key];
     },
 
@@ -615,6 +682,7 @@ export default {
       }
     },
 
+    // 显示提示信息
     showSnackbar(text, color = 'info') {
       this.snackbar = {
         show: true,

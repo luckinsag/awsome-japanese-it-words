@@ -23,5 +23,27 @@ export default defineConfig({
         secure: false
       }
     }
+  },
+  build: {
+    // 生产环境构建优化
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        // 生产环境移除console.log
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
+    // 启用gzip压缩
+    rollupOptions: {
+      output: {
+        // 代码分割
+        manualChunks: {
+          'vue-vendor': ['vue', 'vue-router', 'pinia'],
+          'vuetify-vendor': ['vuetify'],
+          'utils': ['axios']
+        }
+      }
+    }
   }
 }) 

@@ -82,14 +82,21 @@ export default {
       this.loading = true
       this.error = null
       try {
-        console.log('Attempting login with:', { username: this.username })
+        const isDev = import.meta.env.DEV
+        if (isDev) {
+          console.log('Attempting login with:', { username: this.username })
+        }
         const response = await userService.login(this.username, this.password)
-        console.log('Login response:', response)
+        if (isDev) {
+          console.log('Login response:', response)
+        }
         
         if (response.data.code === 200) {
-          console.log('Login successful, user data:', response.data.data)
-          console.log('User data type:', typeof response.data.data)
-          console.log('User data keys:', Object.keys(response.data.data))
+          if (isDev) {
+            console.log('Login successful, user data:', response.data.data)
+            console.log('User data type:', typeof response.data.data)
+            console.log('User data keys:', Object.keys(response.data.data))
+          }
           // 登录成功，保存用户信息到状态管理
           this.userStore.setUser(response.data.data)
           // 跳转到首页，去掉强制刷新

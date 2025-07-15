@@ -9,19 +9,24 @@ const api = axios.create({
   }
 })
 
+// 只在开发环境中启用详细日志
+const isDev = import.meta.env.DEV
+
 // 添加请求拦截器
 api.interceptors.request.use(
   config => {
-    // 打印完整的请求URL和配置
-    const fullUrl = `${config.baseURL}${config.url}`
-    console.log('Request URL:', fullUrl)
-    console.log('Request Config:', {
-      url: config.url,
-      baseURL: config.baseURL,
-      method: config.method,
-      data: config.data,
-      headers: config.headers
-    })
+    if (isDev) {
+      // 打印完整的请求URL和配置
+      const fullUrl = `${config.baseURL}${config.url}`
+      console.log('Request URL:', fullUrl)
+      console.log('Request Config:', {
+        url: config.url,
+        baseURL: config.baseURL,
+        method: config.method,
+        data: config.data,
+        headers: config.headers
+      })
+    }
     return config
   },
   error => {
@@ -33,15 +38,17 @@ api.interceptors.request.use(
 // 添加响应拦截器
 api.interceptors.response.use(
   response => {
-    console.log('Response:', {
-      status: response.status,
-      data: response.data,
-      headers: response.headers,
-      config: {
-        url: response.config.url,
-        baseURL: response.config.baseURL
-      }
-    })
+    if (isDev) {
+      console.log('Response:', {
+        status: response.status,
+        data: response.data,
+        headers: response.headers,
+        config: {
+          url: response.config.url,
+          baseURL: response.config.baseURL
+        }
+      })
+    }
     return response
   },
   error => {

@@ -204,7 +204,10 @@ export default {
       return this.currentQuestionIndex === 9
     },
     canStartTest() {
-      console.log('Words length:', this.words.length)
+      const isDev = import.meta.env.DEV
+      if (isDev) {
+        console.log('Words length:', this.words.length)
+      }
       return this.words && this.words.length >= 10
     }
   },
@@ -231,10 +234,15 @@ export default {
             this.lessonRange.end
           )
         }
-        console.log('Words response:', response)
+        const isDev = import.meta.env.DEV
+        if (isDev) {
+          console.log('Words response:', response)
+        }
         if (response && response.data) {
           this.words = response.data.data || response.data
-          console.log('Fetched words:', this.words)
+          if (isDev) {
+            console.log('Fetched words:', this.words)
+          }
         }
       } catch (error) {
         console.error('Error fetching words:', error)
@@ -247,14 +255,19 @@ export default {
       }
     },
     startTest() {
-      console.log('Starting test with words:', this.words)
+      const isDev = import.meta.env.DEV
+      if (isDev) {
+        console.log('Starting test with words:', this.words)
+      }
       if (!this.words || this.words.length < 10) {
         console.error('Not enough words available:', this.words?.length)
         return
       }
       // 随机选择10个单词
       this.testWords = this.getRandomWords(10)
-      console.log('Selected test words:', this.testWords)
+      if (isDev) {
+        console.log('Selected test words:', this.testWords)
+      }
       this.currentQuestionIndex = 0
       this.correctCount = 0
       this.userAnswers = [] // 重置用户答案
@@ -321,16 +334,21 @@ export default {
           endedAt: new Date(),                   // 修正字段名：endAt -> endedAt，使用Date对象而不是ISO字符串
           score: Number(this.correctCount * 10)   // 确保是数字类型
         }
-        console.log('准备保存考试记录:', userTestDTO);
+        const isDev = import.meta.env.DEV
+        if (isDev) {
+          console.log('准备保存考试记录:', userTestDTO);
+        }
         const response = await wordService.saveUserTest(userTestDTO)
-        console.log('考试记录保存成功，考试编号:', response.data)
+        if (isDev) {
+          console.log('考试记录保存成功，考试编号:', response.data)
+        }
         
         // 询问用户是否保存错题
         const shouldSaveWrongWords = await this.$dialog.confirm({
-                  title: '間違い問題の保存',
-        text: '間違えた問題をミス単語リストに保存しますか？',
-        confirmText: '保存',
-        cancelText: '保存しない'
+          title: '間違い問題の保存',
+          text: '間違えた問題をミス単語リストに保存しますか？',
+          confirmText: '保存',
+          cancelText: '保存しない'
         })
         
         if (shouldSaveWrongWords) {
@@ -346,13 +364,16 @@ export default {
     // 保存错题
     async saveWrongWords(sessionId) {
       try {
+        const isDev = import.meta.env.DEV
         // 遍历所有题目，找出答错的题目
         for (let i = 0; i < this.testWords.length; i++) {
           const word = this.testWords[i]
 
-           // ⚠️ 添加这两行日志来检查 word 对象的实际内容
-          console.log(`Debug: word object at index ${i}:`, word);
-          console.log(`Debug: word.id at index ${i}:`, word.id);
+          // ⚠️ 添加这两行日志来检查 word 对象的实际内容
+          if (isDev) {
+            console.log(`Debug: word object at index ${i}:`, word);
+            console.log(`Debug: word.id at index ${i}:`, word.id);
+          }
 
           const userAnswer = this.userAnswers[i]
           const correctAnswer = word.japanese.replace(/[（(].*?[)）]/g, '').trim()
@@ -364,11 +385,15 @@ export default {
               wordId: Number(word.wordId),
               userId: Number(this.userStore.userId)
             }
-            console.log('準備中:', userWrongDTO)
+            if (isDev) {
+              console.log('準備中:', userWrongDTO)
+            }
             await wordService.insertWrong(userWrongDTO)
           }
         }
-        console.log('保存完成')
+        if (isDev) {
+          console.log('保存完成')
+        }
       } catch (error) {
         console.error('保存失败:', error)
         this.$toast.error('間違い単語の保存に失敗しました。しばらくしてから再試行してください')
