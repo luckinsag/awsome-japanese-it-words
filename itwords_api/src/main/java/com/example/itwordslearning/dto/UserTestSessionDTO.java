@@ -8,7 +8,7 @@ public class UserTestSessionDTO {
 
     private Integer sessionId;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") // 格式化日期时间
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Tokyo") // 格式化日期时间，指定东京时区
     private Date testTime; // 对应 ended_at
     private Integer score;
 
