@@ -6,11 +6,6 @@ services:
     container_name: itwords-frontend
     ports:
       - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx_ssl.conf:/etc/nginx/nginx.conf:ro
-      - /home/ec2-user/ssl/fullchain.pem:/etc/ssl/certs/fullchain.pem:ro
-      - /home/ec2-user/ssl/privkey.pem:/etc/ssl/private/privkey.pem:ro
     depends_on:
       - backend
     networks:
@@ -45,8 +40,6 @@ services:
   mysql:
     image: mysql:8.0
     container_name: itwords-mysql
-    ports:
-      - "3306:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=xcx981211
       - MYSQL_DATABASE=mysql_itwordslearning
@@ -55,7 +48,7 @@ services:
       - MYSQL_CHARACTER_SET_SERVER=utf8mb4
       - MYSQL_COLLATION_SERVER=utf8mb4_unicode_ci
     volumes:
-      - itwords-images_mysql_data:/var/lib/mysql
+      - itwords4_mysql_data:/var/lib/mysql
     networks:
       - itwords-network
     restart: unless-stopped
@@ -66,7 +59,7 @@ services:
       retries: 3
 
 volumes:
-  itwords-images_mysql_data:
+  itwords4_mysql_data:
     external: true
 
 networks:

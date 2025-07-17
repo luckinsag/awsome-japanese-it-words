@@ -353,18 +353,45 @@ export default {
         const response = await wordService.getImportantWords(user.userId)
         if (response && response.data && response.data.code === 200) {
           this.words = response.data.data
-          // 获取每个单词的笔记内容
-          for (const word of this.words) {
-            const wid = word.wordId !== undefined ? word.wordId : word.id;
+          
+          // 使用批量API获取笔记数据
+          if (this.words.length > 0) {
+            const wordIds = this.words.map(word => word.wordId !== undefined ? word.wordId : word.id)
+            
             try {
-              const noteRes = await wordService.getNoteByWordId(wid, user.userId)
-              if (noteRes.data && noteRes.data.code === 200) {
-                word.note = noteRes.data.data || ''
-              } else {
-                word.note = ''
+              // 首先尝试批量获取笔记
+              const batchNotes = await wordService.getBatchNotes(wordIds, user.userId)
+              
+              // 将笔记数据合并到单词数据中
+              for (const word of this.words) {
+                const wid = word.wordId !== undefined ? word.wordId : word.id
+                word.note = batchNotes[wid] || ''
               }
-            } catch {
-              word.note = ''
+            } catch (batchError) {
+              // 如果批量API失败，回退到单个请求
+              const isDev = import.meta.env.DEV
+              if (isDev) {
+                console.warn('批量获取笔记失败，回退到单个请求:', batchError)
+              }
+              
+              // 分批处理，避免过多并发请求
+              const batchSize = 5
+              for (let i = 0; i < this.words.length; i += batchSize) {
+                const batch = this.words.slice(i, i + batchSize)
+                await Promise.all(batch.map(async (word) => {
+                  const wid = word.wordId !== undefined ? word.wordId : word.id
+                  try {
+                    const noteRes = await wordService.getNoteByWordId(wid, user.userId)
+                    if (noteRes.data && noteRes.data.code === 200) {
+                      word.note = noteRes.data.data || ''
+                    } else {
+                      word.note = ''
+                    }
+                  } catch {
+                    word.note = ''
+                  }
+                }))
+              }
             }
           }
         } else {
