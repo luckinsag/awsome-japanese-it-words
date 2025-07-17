@@ -252,8 +252,9 @@ jobs:
         }
         
         scp -i $KEY_FILE -o StrictHostKeyChecking=no deploy-compose.yml $EC2_USER@$EC2_IP:~/itwords-images/
-        scp -i $KEY_FILE -o StrictHostKeyChecking=no scripts/data-processing/init.sql $EC2_USER@$EC2_IP:~/itwords-images/ 2>/dev/null || echo "init.sql 不存在，跳过"
-        scp -i $KEY_FILE -o StrictHostKeyChecking=no complete_wordlist.csv $EC2_USER@$EC2_IP:~/itwords-images/ 2>/dev/null || echo "complete_wordlist.csv 不存在，跳过"
+        scp -i $KEY_FILE -o StrictHostKeyChecking=no scripts/data-processing/init.sql $EC2_USER@$EC2_IP:~/itwords-images/
+        scp -i $KEY_FILE -o StrictHostKeyChecking=no complete_wordlist.csv $EC2_USER@$EC2_IP:~/itwords-images/
+        scp -i $KEY_FILE -o StrictHostKeyChecking=no scripts/data-processing/import_words_final.sh $EC2_USER@$EC2_IP:~/itwords-images/
     
     - name: Start application on EC2
       run: |
@@ -319,6 +320,22 @@ jobs:
           # 检查服务健康状态
           echo "检查服务健康状态:"
           $COMPOSE_CMD -f deploy-compose.yml logs --tail=50
+          
+          # 等待MySQL完全启动
+          echo "等待MySQL完全启动..."
+          sleep 30
+          
+          # 导入单词数据
+          echo "开始导入单词数据..."
+          if [ -f "complete_wordlist.csv" ] && [ -f "import_words_final.sh" ]; then
+            chmod +x import_words_final.sh
+            ./import_words_final.sh
+            echo "✅ 单词数据导入完成"
+          else
+            echo "❌ 缺少必要文件：complete_wordlist.csv 或 import_words_final.sh"
+            echo "当前目录文件列表："
+            ls -la
+          fi
         DEPLOY_SCRIPT
     
     - name: Verify deployment

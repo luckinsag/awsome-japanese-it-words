@@ -5,6 +5,21 @@
 
 echo "🚀 开始导入单词数据（最终版本）..."
 
+# 检查CSV文件是否存在
+if [ ! -f "complete_wordlist.csv" ]; then
+    echo "❌ 错误：complete_wordlist.csv 文件不存在"
+    echo "当前目录文件列表："
+    ls -la
+    exit 1
+fi
+
+# 检查MySQL容器是否运行
+if ! docker ps | grep -q "itwords-mysql"; then
+    echo "❌ 错误：MySQL容器未运行"
+    docker ps
+    exit 1
+fi
+
 # 创建临时SQL文件
 cat > /tmp/import_words_final.sql << 'EOF'
 SET NAMES utf8mb4;
@@ -28,12 +43,15 @@ INSERT INTO words (japanese, chinese, english, category) VALUES
 EOF
 
 # 转换CSV为SQL INSERT语句（跳过标题行）
+echo "处理CSV数据..."
 tail -n +2 complete_wordlist.csv | sed 's/"/\\"/g' | sed 's/,/","/g' | sed 's/^/("/' | sed 's/$/"),/' | sed '$s/,$/;/' >> /tmp/import_words_final.sql
 
+echo "执行SQL导入..."
 # 执行SQL导入
 docker exec -i itwords-mysql mysql -u root -pxcx981211 --default-character-set=utf8mb4 mysql_itwordslearning < /tmp/import_words_final.sql
 
 # 验证导入结果
+echo "验证导入结果..."
 docker exec itwords-mysql mysql -u root -pxcx981211 --default-character-set=utf8mb4 mysql_itwordslearning -e "
 SELECT CONCAT('✅ 成功导入 ', COUNT(*), ' 条单词数据') as result FROM words;
 "
