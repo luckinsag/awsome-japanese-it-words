@@ -20,9 +20,10 @@ public class UserTestServiceImpl implements UserTestService {
         UserTest test = new UserTest();
         test.setUserId(dto.getUserId());
 
-        // 始终使用当前系统时间，确保时间准确性
-        test.setEndedAt(new Date()); // 使用服务器当前时间
-        System.out.println("保存考试记录，用户ID: " + dto.getUserId() + ", 考试时间: " + new Date() + ", 分数: " + dto.getScore());
+        // 使用前端传来的时间，如果为空则使用当前时间
+        Date testTime = dto.getEndedAt() != null ? dto.getEndedAt() : new Date();
+        test.setEndedAt(testTime);
+        System.out.println("保存考试记录，用户ID: " + dto.getUserId() + ", 考试时间: " + testTime + ", 分数: " + dto.getScore());
         
         test.setScore(dto.getScore());
 
