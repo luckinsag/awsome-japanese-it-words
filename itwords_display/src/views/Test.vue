@@ -73,6 +73,7 @@
         <div v-if="currentQuestion" class="text-center mb-6">
           <div class="text-h5 mb-4">{{ currentQuestion.chinese }}</div>
           <v-text-field
+            ref="answerInput"
             v-model="userAnswer"
             label="日本語を入力"
             variant="outlined"
@@ -80,7 +81,8 @@
             hide-details
             class="mx-auto"
             style="max-width: 400px;"
-            @keyup.enter="checkAnswer"
+            :readonly="showFeedback"
+            @keyup.enter="handleEnterKey"
           ></v-text-field>
         </div>
 
@@ -275,6 +277,12 @@ export default {
       this.showResults = false
       this.userAnswer = ''
       this.showFeedback = false
+      // 开始测试时聚焦到输入框
+      this.$nextTick(() => {
+        if (this.$refs.answerInput) {
+          this.$refs.answerInput.focus()
+        }
+      })
     },
     getRandomWords(count) {
       if (!this.words || this.words.length === 0) {
@@ -283,6 +291,15 @@ export default {
       }
       const shuffled = [...this.words].sort(() => 0.5 - Math.random())
       return shuffled.slice(0, count)
+    },
+    handleEnterKey() {
+      if (this.showFeedback) {
+        // 如果已经显示反馈，按回车键进入下一题
+        this.nextQuestion()
+      } else {
+        // 如果还没有提交答案，检查答案
+        this.checkAnswer()
+      }
     },
     checkAnswer() {
       if (!this.userAnswer.trim()) return
@@ -312,6 +329,12 @@ export default {
       } else {
         this.showFeedback = true
         this.showCorrectAnswer = false
+        // 答错时保持输入框焦点
+        this.$nextTick(() => {
+          if (this.$refs.answerInput) {
+            this.$refs.answerInput.focus()
+          }
+        })
       }
     },
     nextQuestion() {
@@ -325,6 +348,12 @@ export default {
         this.userAnswer = ''
         this.showFeedback = false
         this.showCorrectAnswer = false
+        // 进入下一题时重新聚焦到输入框
+        this.$nextTick(() => {
+          if (this.$refs.answerInput) {
+            this.$refs.answerInput.focus()
+          }
+        })
       }
     },
     async saveTestRecord() {
