@@ -106,9 +106,9 @@
       </v-container>
     </v-main>
 
-    <v-footer app class="d-flex justify-center align-center py-2">
+    <!-- <v-footer app class="d-flex justify-center align-center py-2">
       <span class="text-caption">Copyright © 2025 XUE All Rights Reserved.</span>
-    </v-footer>
+    </v-footer> -->
   </v-app>
 </template>
 
