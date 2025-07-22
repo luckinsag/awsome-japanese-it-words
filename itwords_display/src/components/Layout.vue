@@ -56,7 +56,7 @@
     <v-dialog v-model="avatarDialog" max-width="500px">
       <v-card>
         <v-card-title class="text-h5">
-          アバターを選択
+          プロフィール画像を選択
           <v-spacer></v-spacer>
           <v-btn icon="mdi-close" variant="text" @click="avatarDialog = false"></v-btn>
         </v-card-title>
@@ -106,9 +106,6 @@
       </v-container>
     </v-main>
 
-    <!-- <v-footer app class="d-flex justify-center align-center py-2">
-      <span class="text-caption">Copyright © 2025 XUE All Rights Reserved.</span>
-    </v-footer> -->
   </v-app>
 </template>
 
@@ -165,15 +162,16 @@ export default {
         path: '/'
       },
       {
-        title: '単語リスト',
-        icon: 'mdi-list-box',
-        path: '/wordlist'
-      },
-      {
         title: '単語学習',
         icon: 'mdi-book-open-page-variant',
         path: '/study'
       },
+      {
+        title: '単語リスト',
+        icon: 'mdi-list-box',
+        path: '/wordlist'
+      },
+      
    
       {
         title: '重要単語',
