@@ -246,9 +246,16 @@
 
 <script>
 import wordService from '@/api/wordService'
+import { useWordsStore } from '@/store/words'
 
 export default {
   name: 'Important',
+  setup() {
+    const wordsStore = useWordsStore();
+    return {
+      wordsStore
+    };
+  },
   data: () => ({
     lessonRange: {
       start: '1',
@@ -354,25 +361,25 @@ export default {
         if (response && response.data && response.data.code === 200) {
           this.words = response.data.data
           
+          // 将单词数据存储到store中
+          this.wordsStore.setWords(this.words)
+          
           // 使用批量API获取笔记数据
           if (this.words.length > 0) {
             const wordIds = this.words.map(word => word.wordId !== undefined ? word.wordId : word.id)
             
             try {
               // 首先尝试批量获取笔记
-              const batchNotes = await wordService.getBatchNotes(wordIds, user.userId)
+              const notesMap = await this.wordsStore.loadBatchNotes(wordIds, user.userId)
               
               // 将笔记数据合并到单词数据中
               for (const word of this.words) {
                 const wid = word.wordId !== undefined ? word.wordId : word.id
-                word.note = batchNotes[wid] || ''
+                word.note = notesMap[wid] || ''
               }
             } catch (batchError) {
               // 如果批量API失败，回退到单个请求
-              const isDev = import.meta.env.DEV
-              if (isDev) {
-                console.warn('批量获取笔记失败，回退到单个请求:', batchError)
-              }
+              console.warn('批量获取笔记失败，回退到单个请求:', batchError)
               
               // 分批处理，避免过多并发请求
               const batchSize = 5
@@ -384,6 +391,13 @@ export default {
                     const noteRes = await wordService.getNoteByWordId(wid, user.userId)
                     if (noteRes.data && noteRes.data.code === 200) {
                       word.note = noteRes.data.data || ''
+                                  // 更新store中的缓存
+            this.wordsStore.notesCache[wid] = noteRes.data.data || ''
+            if (noteRes.data.data) {
+              if (!this.wordsStore.wordsWithNotes.includes(wid)) {
+                this.wordsStore.wordsWithNotes.push(wid)
+              }
+            }
                     } else {
                       word.note = ''
                     }
@@ -437,16 +451,15 @@ export default {
           this.showSnackbar('ユーザー情報が不完全です。再度ログインしてください', 'error')
           return
         }
-        const requestBody = {
-          userId: user.userId,
-          wordId: item.wordId !== undefined ? item.wordId : item.id
-        }
-        const res = await wordService.deleteFromImportantWords(requestBody)
-        if (res.data && res.data.code === 200) {
+        
+        const wordId = item.wordId !== undefined ? item.wordId : item.id
+        const result = await this.wordsStore.removeFromImportant(wordId, user.userId)
+        
+        if (result.success) {
           this.showSnackbar('重要単語から削除しました', 'success')
           await this.fetchWords();
         } else {
-          this.showSnackbar('削除に失敗しました', 'error')
+          this.showSnackbar(result.error || '削除に失敗しました', 'error')
         }
       } catch (error) {
         this.showSnackbar('操作に失敗しました', 'error')
@@ -475,16 +488,24 @@ export default {
             return
           }
 
-          const noteDTO = {
-            wordId: Number(this.currentItem.wordId || this.currentItem.id),
-            memo: this.currentNote
-          }
-          const res = await wordService.saveNote(noteDTO, user.userId)
-          if (res.data && res.data.code === 200) {
+          const wordId = this.currentItem.wordId !== undefined ? this.currentItem.wordId : this.currentItem.id
+          const result = await this.wordsStore.updateWordNote(wordId, this.currentNote, user.userId)
+          
+          if (result.success) {
             this.currentItem.note = this.currentNote
+            // 确保store中的缓存是最新的
+            const wordId = this.currentItem.wordId !== undefined ? this.currentItem.wordId : this.currentItem.id
+            this.wordsStore.notesCache[wordId] = this.currentNote
+            if (this.currentNote && this.currentNote.trim()) {
+              if (!this.wordsStore.wordsWithNotes.includes(wordId)) {
+                this.wordsStore.wordsWithNotes.push(wordId)
+              }
+            } else {
+              this.wordsStore.wordsWithNotes = this.wordsStore.wordsWithNotes.filter(id => id !== wordId)
+            }
             this.showSnackbar('ノートを保存しました', 'success')
           } else {
-            this.showSnackbar('ノートの保存に失敗しました', 'error')
+            this.showSnackbar(result.error || 'ノートの保存に失敗しました', 'error')
           }
         } catch (error) {
           console.error('保存笔记失败:', error)
