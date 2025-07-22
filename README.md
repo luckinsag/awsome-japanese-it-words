@@ -2,7 +2,7 @@
 
 基于Spring Boot + Vue.js的IT词汇学习应用
 
-## 🚀 快速开始
+##  快速开始
 
 ### 一键部署到AWS EC2
 
@@ -17,7 +17,7 @@
 ./update.sh
 ```
 
-## 📁 项目结构
+##  项目结构
 
 ```
 ITWORDS 4/
@@ -62,8 +62,8 @@ ITWORDS 4/
    ```
 
 3. **访问应用**
-   - 前端: http://57.180.30.179
-   - 后端API: http://57.180.30.179:8080
+   - http://itwords-learning.duckdns.org
+     
 
 ### 日常更新
 
@@ -108,7 +108,6 @@ ITWORDS 4/
 ##  文档
 
 - [部署指南](docs/DEPLOYMENT.md) - 详细的部署说明
-- [部署方式对比](docs/DEPLOYMENT-COMPARISON.md) - 技术对比分析
 - [使用指南](docs/DEPLOYMENT-GUIDE.md) - 完整的使用文档
 
 ##  安全说明
@@ -118,7 +117,7 @@ ITWORDS 4/
 - 定期轮换AWS密钥对
 - 生产环境建议启用HTTPS
 
-## 📞 技术支持
+##  技术支持
 
 如遇到问题，请按以下步骤排查：
 
